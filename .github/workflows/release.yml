@@ -3,7 +3,7 @@ name: 🛡️ CampusNet Guard 自动打包发布
 on:
   push:
     tags:
-      - 'v*'                  # 推送 v 开头标签时触发，如 v0.3.0
+      - 'v*'                  # 推送 v 开头标签时触发，如 v0.1.0
 
 permissions:
   contents: write             # 创建 Release + 上传资产（最小权限）
@@ -31,12 +31,22 @@ jobs:
       run: |
         python build.py
 
-    - name: 🚀 5. 自动创建 GitHub Release 并上传 EXE
+    - name: 🏷️ 5. 重命名产物为 CampusNet Guard 品牌
+      run: |
+        Copy-Item dist\cyber-lobster-gui.exe dist\campusnet-guard-gui.exe
+        Copy-Item dist\cyber-lobster-cli.exe dist\campusnet-guard-cli.exe
+
+    - name: 📦 6. 打包 Windows 发布包
+      run: |
+        Compress-Archive -Path dist\campusnet-guard-gui.exe, dist\campusnet-guard-cli.exe, docs\QUICK_START_WINDOWS.md -DestinationPath dist\campusnet-guard-windows.zip
+
+    - name: 🚀 7. 自动创建 GitHub Release 并上传
       uses: softprops/action-gh-release@v2
       with:
         files: |
-          dist/cyber-lobster-gui.exe
-          dist/cyber-lobster-cli.exe
+          dist/campusnet-guard-gui.exe
+          dist/campusnet-guard-cli.exe
+          dist/campusnet-guard-windows.zip
         generate_release_notes: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
