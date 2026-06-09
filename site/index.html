@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusNet Guard — 校园网守护</title>
+    <meta name="description" content="适配 Ruijie ePortal 的校园网自动认证与断网重连工具">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>🛡️ CampusNet Guard</h1>
+            <p class="subtitle">校园网守护 · 适配 Ruijie ePortal 的校园网自动认证与断网重连工具</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="hero">
+            <p class="tagline">自动认证 · 断网重连 · 密码本地加密 · 覆盖宿舍/教室/实验室/NAS/软路由</p>
+        </section>
+
+        <section class="download">
+            <h2>⬇️ 下载</h2>
+            <div class="download-grid">
+                <div class="download-card">
+                    <h3>Windows 用户</h3>
+                    <p>下载 zip，解压后双击 GUI 即可使用。不需要安装 Python。</p>
+                    <a href="https://github.com/mi179/campusnet-guard/releases/latest" class="btn btn-primary">
+                        下载 Windows 版
+                    </a>
+                    <p class="note">文件名: cyber-lobster-gui.exe</p>
+                </div>
+                <div class="download-card">
+                    <h3>Linux 用户</h3>
+                    <p>通过源码安装，使用 CLI 命令行。</p>
+                    <a href="https://github.com/mi179/campusnet-guard" class="btn btn-secondary">
+                        查看 GitHub 仓库
+                    </a>
+                </div>
+            </div>
+            <p class="mirror-note">国内镜像下载准备中</p>
+        </section>
+
+        <section class="features">
+            <h2>✨ 特性</h2>
+            <ul>
+                <li><strong>自动认证</strong> — 断网时自动重新登录校园网</li>
+                <li><strong>密码安全</strong> — 密码本地加密保存，不上传、不明文</li>
+                <li><strong>多运营商</strong> — 支持电信、移动、联通、校园网</li>
+                <li><strong>开机自启</strong> — Windows 可设置开机自动守护</li>
+                <li><strong>适用场景</strong> — 宿舍、教室、实验室、办公室、NAS、软路由、小主机</li>
+            </ul>
+        </section>
+
+        <section class="quickstart">
+            <h2>🚀 快速开始</h2>
+
+            <h3>Windows</h3>
+            <ol>
+                <li>下载 <code>cyber-lobster-windows.zip</code></li>
+                <li>解压，双击 <code>cyber-lobster-gui.exe</code></li>
+                <li>添加账号（运营商、学号、密码）</li>
+                <li>点击"开始守护"</li>
+            </ol>
+            <p class="note">首次运行可能触发 Windows SmartScreen，点击"更多信息" → "仍要运行"即可。</p>
+
+            <h3>Linux</h3>
+            <pre><code>git clone https://github.com/mi179/campusnet-guard.git
+cd campusnet-guard
+bash scripts/linux/install.sh
+source .venv/bin/activate
+campusnet setup
+campusnet start</code></pre>
+        </section>
+
+        <section class="faq">
+            <h2>❓ 常见问题</h2>
+
+            <h3>认证服务器地址是多少？</h3>
+            <p>不同学校不同。示例 <code>172.16.54.18</code>，实际以你学校/单位认证页为准。</p>
+
+            <h3>密码安全吗？</h3>
+            <p>密码使用 DPAPI（Windows）或本地密钥 + HMAC（Linux）加密保存，不会明文落盘，不会上传。</p>
+
+            <h3>Windows 提示"未知发布者"？</h3>
+            <p>程序没有购买代码签名证书。点击"更多信息" → "仍要运行"即可。不代表有病毒。</p>
+
+            <h3>在线设备数量有限制？</h3>
+            <p>这取决于学校网络策略，本工具无法改变。</p>
+
+            <h3>支持 macOS 吗？</h3>
+            <p>暂未验证，不作为当前支持平台。</p>
+        </section>
+
+        <section class="disclaimer">
+            <h2>⚠️ 免责声明</h2>
+            <ul>
+                <li>本工具仅用于用户自己的校园网账号自动认证和断网重连</li>
+                <li>不绕过认证、不破解、不共享账号、不突破在线数量限制</li>
+                <li>学校/运营商的认证策略由网络系统决定</li>
+                <li>不保证适配所有 Ruijie ePortal 版本</li>
+                <li>使用者应遵守学校网络管理规定</li>
+            </ul>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>
+                <a href="https://github.com/mi179/campusnet-guard">GitHub</a> ·
+                <a href="https://github.com/mi179/campusnet-guard/issues">反馈问题</a> ·
+                MIT License
+            </p>
+        </div>
+    </footer>
+</body>
+</html>
