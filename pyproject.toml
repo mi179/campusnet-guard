@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "campusnet-guard"
+version = "0.1.0"
+description = "适配 Ruijie ePortal 的校园网自动认证与断网重连工具"
+authors = [{ name = "mi179" }]
+license = { text = "MIT" }
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "requests>=2.28",
+]
+
+[project.scripts]
+cyber-lobster = "cyber_lobster.cli:main"
+cyber-lobster-gui = "cyber_lobster.gui:main"
+
+[tool.setuptools]
+py-modules = ["exe_main", "gui_main"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
