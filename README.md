@@ -167,7 +167,7 @@ pip install -e .
 
 ```bash
 # 添加账号（密码隐藏输入，自动加密保存）
-cyber-lobster add
+cyber-lobster setup
 
 # 启动断网自动重连
 cyber-lobster start
@@ -227,7 +227,7 @@ WantedBy=default.target
 
 | 命令 | 用途 |
 |------|------|
-| `cyber-lobster add` | 添加账号 |
+| `cyber-lobster setup` | 添加账号（`add` 是别名） |
 | `cyber-lobster start` | 启动守护 |
 | `cyber-lobster list` | 查看账号 |
 | `cyber-lobster test` | 验证登录 |
@@ -286,7 +286,7 @@ git clone https://github.com/mi179/campusnet-guard.git
 
 ### Q: 换电脑后密码不可用？
 
-Windows DPAPI 加密的密码绑定当前系统用户，换电脑/换用户后需要重新运行 `cyber-lobster add` 输入密码。
+Windows DPAPI 加密的密码绑定当前系统用户，换电脑/换用户后需要重新运行 `cyber-lobster setup` 输入密码。
 
 ### Q: 开机自启动找不到？
 
