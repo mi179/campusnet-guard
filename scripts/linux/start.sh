@@ -12,4 +12,4 @@ if [ -f ".venv/bin/activate" ]; then
     source .venv/bin/activate
 fi
 
-exec cyber-lobster start "$@"
+exec campusnet start "$@"

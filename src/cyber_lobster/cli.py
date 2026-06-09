@@ -157,7 +157,7 @@ def _prompt_choice(label: str, choices: set[str], default: str) -> str:
 def _password_required(account: AccountConfig) -> bool:
     if account.password:
         return True
-    error(f"账号 {account.user_id} 的密码不可用，请重新运行 cyber-lobster setup 更新该账号")
+    error(f"账号 {account.user_id} 的密码不可用，请重新运行 campusnet setup 更新该账号")
     return False
 
 
@@ -338,7 +338,7 @@ def cmd_accounts(args: argparse.Namespace) -> int:
     cfg = load_config()
     ids = cfg.account_ids()
     if not ids:
-        warn("没有已保存的账号，请先运行 cyber-lobster setup")
+        warn("没有已保存的账号，请先运行 campusnet setup")
         return 1
 
     print()
@@ -362,7 +362,7 @@ def cmd_switch(args: argparse.Namespace) -> int:
     ids = cfg.account_ids()
 
     if not ids:
-        warn("没有已保存的账号，请先运行 cyber-lobster setup")
+        warn("没有已保存的账号，请先运行 campusnet setup")
         return 1
 
     current = cfg.current_user_id
@@ -410,7 +410,7 @@ def cmd_verify(args: argparse.Namespace) -> int:
     cfg = load_config()
     user_id = getattr(args, "user_id", "") or cfg.current_user_id
     if not user_id:
-        warn("没有当前账号，请先运行 cyber-lobster setup")
+        warn("没有当前账号，请先运行 campusnet setup")
         return 1
 
     account = cfg.get_account(user_id)
@@ -450,7 +450,7 @@ def cmd_watch(args: argparse.Namespace) -> int:
     account = cfg.get_current_account()
 
     if not account:
-        warn("配置中没有有效账号，请先运行 cyber-lobster setup")
+        warn("配置中没有有效账号，请先运行 campusnet setup")
         return 1
     if not _password_required(account):
         return 1
@@ -691,10 +691,10 @@ def cmd_doctor(args: argparse.Namespace) -> int:
 
     if online:
         print("外网状态: [正常] 已连通")
-        print("建议: 可运行 cyber-lobster start 进入守护模式")
+        print("建议: 可运行 campusnet start 进入守护模式")
     else:
         print("外网状态: [断开] 未连通或被认证页拦截")
-        print("建议: 可运行 cyber-lobster test 验证登录，或 cyber-lobster start 自动重连")
+        print("建议: 可运行 campusnet test 验证登录，或 campusnet start 自动重连")
 
     return 0
 
@@ -704,7 +704,7 @@ def cmd_login(args: argparse.Namespace) -> int:
         cfg = load_config()
         acct = cfg.get_current_account()
         if not acct:
-            warn("配置中没有有效账号，请先运行 cyber-lobster setup")
+            warn("配置中没有有效账号，请先运行 campusnet setup")
             return 1
         if not _password_required(acct):
             return 1
