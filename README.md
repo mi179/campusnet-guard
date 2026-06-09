@@ -24,10 +24,10 @@ CampusNet Guard（校园网守护）是适配 Ruijie ePortal 的校园网自动�
 
 | 名称 | 说明 |
 |------|------|
-| **CampusNet Guard** | 公开产品名，用于文档、官网、发布页 |
-| **cyber-lobster** | 当前保留的 CLI 命令名 / Python 包名 / EXE 文件名 |
-
-这样做是为了兼容旧版本和减少破坏性重命名。后续版本可能添加 `campusnet-guard` 作为 CLI 别名。
+| **CampusNet Guard** | 公开产品名和 Release 下载文件名 |
+| **campusnet** | 推荐 CLI 命令 |
+| **campusnet-guard** | 兼容 CLI 别名 |
+| **cyber-lobster** | 旧版本兼容命令 / 内部 Python 包名 |
 
 ---
 
@@ -49,7 +49,7 @@ CampusNet Guard（校园网守护）是适配 Ruijie ePortal 的校园网自动�
 
 ## ⬇️ 下载
 
-**Windows 普通用户**：下载 `cyber-lobster-windows.zip`，解压后双击 `cyber-lobster-gui.exe` 即可使用，不需要安装 Python。
+**Windows 普通用户**：下载 `campusnet-guard-windows.zip`，解压后双击 `campusnet-guard-gui.exe` 即可使用，不需要安装 Python。
 
 > 内部命令和安装包文件名仍为 `cyber-lobster`，后续版本可能统一重命名。
 
@@ -72,13 +72,13 @@ CampusNet Guard（校园网守护）是适配 Ruijie ePortal 的校园网自动�
 
 ### 第 1 步：下载并解压
 
-从 [Releases 页面](https://github.com/mi179/campusnet-guard/releases/latest) 下载 `cyber-lobster-windows.zip`，解压到任意文件夹。
+从 [Releases 页面](https://github.com/mi179/campusnet-guard/releases/latest) 下载 `campusnet-guard-windows.zip`，解压到任意文件夹。
 
 ### 第 2 步：双击运行
 
-双击 `cyber-lobster-gui.exe`。
+双击 `campusnet-guard-gui.exe`。
 
-> **首次运行提示**：Windows 可能弹出"Windows 已保护你的电脑"（SmartScreen）或"未知发布者"提示。这是因为程序没有购买代码签名证书。点击 **"更多信息"** → **"仍要运行"** 即可。详见 [Windows 安全提示说明](#windows-安全提示)。
+> **首次运行提示**：当前版本暂未进行代码签名，因此 Windows SmartScreen 可能提示未知发布者。请只从官方 GitHub Releases 下载，并自行判断是否信任。点击 **"更多信息"** → **"仍要运行"** 即可。详见 [Windows 安全提示说明](#windows-安全提示)。
 
 ### 第 3 步：添加账号
 
@@ -117,7 +117,7 @@ CampusNet Guard（校园网守护）是适配 Ruijie ePortal 的校园网自动�
 
 ### "未知发布者" / SmartScreen 拦截
 
-程序没有购买代码签名证书（个人项目，证书年费数千元），所以 Windows 会弹出安全提示。这是正常现象，**不代表程序有病毒**。
+当前版本暂未进行代码签名，因此 Windows SmartScreen 可能提示未知发布者。请只从官方 GitHub Releases 下载，并自行判断是否信任。
 
 处理方式：
 1. 弹出蓝色窗口 → 点击 **"更多信息"** → **"仍要运行"**
@@ -125,7 +125,7 @@ CampusNet Guard（校园网守护）是适配 Ruijie ePortal 的校园网自动�
 
 ### 为什么不使用 UPX 压缩
 
-UPX 是可执行文件压缩工具，但会被 Windows Defender 误报为病毒。本项目不使用 UPX，所以文件较大（约 15 MB），但不会触发杀毒软件误报。
+UPX 是可执行文件压缩工具，可能触发安全软件误报。本项目不使用 UPX，文件较大（约 15 MB），但兼容性更好。
 
 ---
 
@@ -133,7 +133,7 @@ UPX 是可执行文件压缩工具，但会被 Windows Defender 误报为病毒�
 
 - **密码不明文落盘**
   - Windows：使用 DPAPI 加密，绑定当前系统用户，换用户/换电脑后需重新输入
-  - Linux：使用本地密钥 + HMAC-SHA256 加密
+  - Linux：使用本地密钥保护密码，配置文件权限 600
 - **配置文件权限**：`chmod 600`，仅当前用户可读写
 - **配置路径**：
   - Windows：`%APPDATA%\cyber-lobster\config.json`
@@ -199,7 +199,7 @@ campusnet start
 
 ### systemd user service（后续计划）
 
-当前版本不内置 systemd service。高级用户可手动配置：
+仓库提供 systemd user service 模板，但不会自动启用。高级用户可手动配置：
 
 ```ini
 # ~/.config/systemd/user/campusnet-guard.service
@@ -325,9 +325,9 @@ Windows DPAPI 加密的密码绑定当前系统用户，换电脑/换用户后�
 
 | 文件 | 用途 |
 |------|------|
-| `cyber-lobster-windows.zip` | Windows 用户下载包 |
-| `cyber-lobster-gui.exe` | 图形界面版（推荐） |
-| `cyber-lobster-cli.exe` | 命令行版（排障用） |
+| `campusnet-guard-windows.zip` | Windows 用户下载包 |
+| `campusnet-guard-gui.exe` | 图形界面版（推荐） |
+| `campusnet-guard-cli.exe` | 命令行版（排障用） |
 
 - **不需要安装 Python** — EXE 已包含 Python 运行时
 - **不需要安装 PyInstaller** — 这是开发工具，普通用户不需要

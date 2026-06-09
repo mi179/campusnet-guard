@@ -10,9 +10,28 @@ authors = [{ name = "mi179" }]
 license = { text = "MIT" }
 readme = "README.md"
 requires-python = ">=3.10"
+keywords = ["campus", "network", "eportal", "ruijie", "auto-login", "reconnect"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: System :: Networking",
+]
 dependencies = [
     "requests>=2.28",
 ]
+
+[project.urls]
+Homepage = "https://github.com/mi179/campusnet-guard"
+Repository = "https://github.com/mi179/campusnet-guard"
+Issues = "https://github.com/mi179/campusnet-guard/issues"
+Documentation = "https://github.com/mi179/campusnet-guard#readme"
 
 [project.scripts]
 campusnet = "cyber_lobster.cli:main"

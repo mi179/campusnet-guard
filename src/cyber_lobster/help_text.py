@@ -5,7 +5,7 @@ USER_GUIDE = """CampusNet Guard 帮助
 
 普通用户怎么用
 ----------------------------------------
-最简单方式：双击 cyber-lobster-gui.exe。
+最简单方式：双击 campusnet-guard-gui.exe。
 
 图形界面里：
 1. 第一次使用会进入"高级"页，点击"添加账号"
@@ -82,7 +82,7 @@ Q: 程序放到桌面、下载目录、U盘，会不会影响账号信息？
 A: 不会。默认账号信息和程序位置分离。
 
 Q: 我只想双击 EXE 使用，可以吗？
-A: 可以。双击 cyber-lobster-gui.exe，日常只需要看"主页"。
+A: 可以。双击 campusnet-guard-gui.exe，日常只需要看"主页"。
 """
 
 

@@ -57,7 +57,7 @@ campusnet setup
 
 **认证服务器地址**：不同学校的认证服务器地址可能不同。添加账号时会提示确认，示例 `172.16.54.18`，请以学校网络中心提供的地址为准。
 
-密码会自动加密保存到 `~/.config/cyber-lobster/config.json`，使用本地密钥 + HMAC-SHA256 保护。
+密码会自动加密保存到 `~/.config/cyber-lobster/config.json`，使用本地密钥保护密码，配置文件权限 600。
 
 ## 查看账号
 
@@ -155,7 +155,7 @@ screen -ls
 
 ## systemd user service（高级用户）
 
-当前版本不内置 systemd service。高级用户可手动配置：
+仓库提供 systemd user service 模板，但不会自动启用。高级用户可手动配置：
 
 ### 1. 复制模板
 
@@ -215,7 +215,7 @@ campusnet --help
 
 ## 密码存储
 
-Linux 下密码使用本地密钥 + HMAC-SHA256 加密：
+Linux 下使用本地密钥保护密码，并设置配置文件权限为 600；安全性依赖当前用户目录权限：
 
 - 密钥文件：`~/.cyber_lobster_key`（32 字节随机密钥，权限 600）
 - 配置文件：`~/.config/cyber-lobster/config.json`（权限 600）

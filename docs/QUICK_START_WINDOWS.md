@@ -8,7 +8,7 @@
 
 1. 打开 https://github.com/mi179/campusnet-guard/releases/latest
 2. 找到 **Assets**（页面下方）
-3. 点击 **cyber-lobster-windows.zip** 下载
+3. 点击 **campusnet-guard-windows.zip** 下载
 
 ### GitHub 下载慢怎么办
 
@@ -31,20 +31,20 @@
 
 ## 第 2 步：解压
 
-1. 找到下载的 `cyber-lobster-windows.zip`
+1. 找到下载的 `campusnet-guard-windows.zip`
 2. 右键 → **全部解压缩**
 3. 选择解压到桌面或任意文件夹
-4. 解压后会看到 `cyber-lobster-gui.exe` 和 `cyber-lobster-cli.exe`
+4. 解压后会看到 `campusnet-guard-gui.exe` 和 `campusnet-guard-cli.exe`
 
 ## 第 3 步：双击运行
 
-双击 `cyber-lobster-gui.exe`。
+双击 `campusnet-guard-gui.exe`。
 
 ### 可能弹出的安全提示
 
 **情况 1：蓝色窗口 "Windows 已保护你的电脑"**
 
-这是因为程序没有购买代码签名证书（年费几千元，个人项目买不起）。
+当前版本暂未进行代码签名，因此 Windows SmartScreen 可能提示未知发布者。请只从官方 GitHub Releases 下载，并自行判断是否信任。
 
 1. 点击 **"更多信息"**
 2. 点击 **"仍要运行"**
@@ -53,7 +53,7 @@
 
 同上，点击 **"仍要运行"**。
 
-**这不是病毒**，只是 Windows 对没有签名证书的程序的正常提示。
+请只从官方 GitHub Releases 下载，并自行判断是否信任。
 
 ## 第 4 步：添加账号
 
@@ -91,7 +91,7 @@
 
 1. **截图**：按键盘上的 `Print Screen` 键，然后粘贴到微信/QQ 发给帮你的人
 2. **复制日志**：在 GUI 日志区域，选中文字 → 右键 → 复制
-3. **运行诊断**：打开 `cyber-lobster-cli.exe`，输入 `doctor`，把输出发给帮你的人
+3. **运行诊断**：打开 `campusnet-guard-cli.exe`，输入 `doctor`，把输出发给帮你的人
 
 ## 常见问题
 
