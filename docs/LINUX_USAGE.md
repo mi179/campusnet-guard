@@ -2,7 +2,7 @@
 
 CampusNet Guard（校园网守护）Linux 用户通过源码运行，不提供 Linux EXE。
 
-> 内部命令仍为 `cyber-lobster`，后续版本可能添加 `campusnet` 别名。
+> `campusnet` 是推荐的 CLI 命令。`cyber-lobster` 是旧版本兼容命令，仍然可用。
 
 ## 适用场景
 
@@ -48,7 +48,7 @@ pip install -e .
 ## 添加账号
 
 ```bash
-cyber-lobster setup
+campusnet setup
 ```
 
 按提示选择运营商、输入学号和密码。密码输入时不会显示，这是正常的。
@@ -62,19 +62,19 @@ cyber-lobster setup
 ## 查看账号
 
 ```bash
-cyber-lobster list
+campusnet list
 ```
 
 ## 验证登录
 
 ```bash
-cyber-lobster test
+campusnet test
 ```
 
 ## 诊断
 
 ```bash
-cyber-lobster doctor
+campusnet doctor
 ```
 
 输出配置文件位置、账号状态、密码可读性、外网连通性。
@@ -88,7 +88,7 @@ bash scripts/linux/doctor.sh
 ## 启动守护
 
 ```bash
-cyber-lobster start
+campusnet start
 ```
 
 程序会每 10 秒检测一次网络，断网时自动重新认证。
@@ -103,10 +103,10 @@ bash scripts/linux/start.sh
 
 ```bash
 # 修改检测间隔为 30 秒
-cyber-lobster start --interval 30
+campusnet start --interval 30
 
 # 修改超时为 5 秒
-cyber-lobster start --timeout 5
+campusnet start --timeout 5
 ```
 
 ### 停止守护
@@ -122,7 +122,7 @@ cyber-lobster start --timeout 5
 tmux new -s campusnet
 
 # 在 tmux 中启动守护
-cyber-lobster start
+campusnet start
 
 # 退出 tmux（程序继续运行）
 # 按 Ctrl+B，然后按 D
@@ -141,7 +141,7 @@ tmux ls
 screen -S campusnet
 
 # 在 screen 中启动守护
-cyber-lobster start
+campusnet start
 
 # 退出 screen（程序继续运行）
 # 按 Ctrl+A，然后按 D
@@ -170,7 +170,7 @@ cp scripts/linux/systemd-user/campusnet-guard.service ~/.config/systemd/user/
 
 ```ini
 WorkingDirectory=/home/你的用户名/campusnet-guard
-ExecStart=/home/你的用户名/campusnet-guard/.venv/bin/cyber-lobster start --interval 10
+ExecStart=/home/你的用户名/campusnet-guard/.venv/bin/campusnet start --interval 10
 ```
 
 ### 3. 启用
@@ -204,13 +204,13 @@ systemctl --user disable campusnet-guard
 ## 注销下线
 
 ```bash
-cyber-lobster logout
+campusnet logout
 ```
 
 ## 查看所有命令
 
 ```bash
-cyber-lobster --help
+campusnet --help
 ```
 
 ## 密码存储

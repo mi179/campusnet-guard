@@ -15,6 +15,8 @@ dependencies = [
 ]
 
 [project.scripts]
+campusnet = "cyber_lobster.cli:main"
+campusnet-guard = "cyber_lobster.cli:main"
 cyber-lobster = "cyber_lobster.cli:main"
 cyber-lobster-gui = "cyber_lobster.gui:main"
 

@@ -49,14 +49,12 @@ def build_parser() -> argparse.ArgumentParser:
         description="cyber-lobster 校园网自动重连工具",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=(
-            "普通用户常用命令:\n"
-            "  cyber-lobster              打开主菜单\n"
-            "  cyber-lobster add          添加账号\n"
-            "  cyber-lobster start        启动守护模式\n"
-            "  cyber-lobster list         查看账号\n"
-            "  cyber-lobster test         验证当前账号\n"
-            "  cyber-lobster doctor       检查配置和网络状态\n"
-            "  cyber-lobster help         查看内置帮助文档\n"
+            "常用命令（campusnet 是推荐入口，cyber-lobster 仍兼容）:\n"
+            "  campusnet setup            添加账号\n"
+            "  campusnet start            启动守护模式\n"
+            "  campusnet list             查看账号\n"
+            "  campusnet verify           验证当前账号\n"
+            "  campusnet doctor           检查配置和网络状态\n"
         ),
     )
     parser.add_argument("--version", action="version", version=f"cyber-lobster {__version__}")
@@ -664,7 +662,7 @@ def cmd_doctor(args: argparse.Namespace) -> int:
     ids = cfg.account_ids()
     if not ids:
         print("账号: [失败] 未添加账号")
-        print("下一步: 运行 cyber-lobster add")
+        print("下一步: 运行 campusnet setup")
         return 1
 
     print(f"账号数量: {len(ids)}")
@@ -673,7 +671,7 @@ def cmd_doctor(args: argparse.Namespace) -> int:
     account = cfg.get_current_account()
     if not account:
         print("当前账号: [失败] 配置中找不到当前账号")
-        print("下一步: 运行 cyber-lobster list 查看账号，或 cyber-lobster add 重新添加")
+        print("下一步: 运行 campusnet list 查看账号，或 campusnet setup 重新添加")
         return 1
 
     print(f"运营商: {SERVICE_NAMES.get(account.service, account.service)}")
@@ -682,7 +680,7 @@ def cmd_doctor(args: argparse.Namespace) -> int:
         print("密码存储: [正常] 可读取（未明文显示）")
     else:
         print("密码存储: [失败] 不可读取")
-        print("下一步: 运行 cyber-lobster add 重新添加该账号")
+        print("下一步: 运行 campusnet setup 重新添加该账号")
         return 1
 
     try:

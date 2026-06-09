@@ -167,30 +167,32 @@ pip install -e .
 
 ```bash
 # 添加账号（密码隐藏输入，自动加密保存）
-cyber-lobster setup
+campusnet setup
 
 # 启动断网自动重连
-cyber-lobster start
+campusnet start
 
 # 诊断配置和网络状态
-cyber-lobster doctor
+campusnet doctor
 
 # 查看已保存账号
-cyber-lobster list
+campusnet list
 ```
+
+> `cyber-lobster` 是旧版本兼容命令，仍然可用。`campusnet` 是 CampusNet Guard 的轻量 CLI 推荐入口。
 
 ### 后台运行
 
 ```bash
 # tmux 后台运行
 tmux new -s campusnet
-cyber-lobster start
+campusnet start
 # Ctrl+B D 退出 tmux，程序继续运行
 # tmux attach -t campusnet 重新连接
 
 # screen 后台运行
 screen -S campusnet
-cyber-lobster start
+campusnet start
 # Ctrl+A D 退出 screen
 # screen -r campusnet 重新连接
 ```
@@ -200,14 +202,14 @@ cyber-lobster start
 当前版本不内置 systemd service。高级用户可手动配置：
 
 ```ini
-# ~/.config/systemd/user/cyber-lobster.service
+# ~/.config/systemd/user/campusnet-guard.service
 [Unit]
 Description=CampusNet Guard 校园网自动认证守护
 After=network-online.target
 
 [Service]
 Type=simple
-ExecStart=%h/.venv/bin/cyber-lobster start
+ExecStart=%h/.venv/bin/campusnet start
 Restart=on-failure
 RestartSec=30
 
@@ -221,22 +223,23 @@ WantedBy=default.target
 
 ---
 
-## 🔧 CLI 命令（排障/高级用户）
+## 🔧 CLI 命令（Linux / 排障）
 
-**普通用户推荐使用 GUI，不需要 CLI。** CLI 主要用于排障和高级场景。
+**Windows 普通用户推荐使用 GUI。** Linux 用户使用 CLI。
 
 | 命令 | 用途 |
 |------|------|
-| `cyber-lobster setup` | 添加账号（`add` 是别名） |
-| `cyber-lobster start` | 启动守护 |
-| `cyber-lobster list` | 查看账号 |
-| `cyber-lobster test` | 验证登录 |
-| `cyber-lobster doctor` | 诊断 |
-| `cyber-lobster logout` | 注销下线 |
-| `cyber-lobster autostart enable` | 开启开机自启 |
-| `cyber-lobster autostart disable` | 关闭开机自启 |
+| `campusnet setup` | 添加账号（`add` 是别名） |
+| `campusnet start` | 启动守护 |
+| `campusnet list` | 查看账号 |
+| `campusnet verify` | 验证登录（`test` 是别名） |
+| `campusnet doctor` | 诊断 |
+| `campusnet logout` | 注销下线 |
+| `campusnet autostart enable` | 开启开机自启 |
 
-完整命令列表：`cyber-lobster --help`
+> `cyber-lobster` 是旧版本兼容命令，仍然可用。`campusnet` 是推荐入口。
+
+完整命令列表：`campusnet --help`
 
 ---
 
