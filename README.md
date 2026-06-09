@@ -10,7 +10,6 @@
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux-lightgrey)]()
 
-> 内部命令和安装包文件名仍为 `cyber-lobster`，后续版本可能统一重命名。
 
 </div>
 
@@ -51,7 +50,6 @@ CampusNet Guard（校园网守护）是适配 Ruijie ePortal 的校园网自动�
 
 **Windows 普通用户**：下载 `campusnet-guard-windows.zip`，解压后双击 `campusnet-guard-gui.exe` 即可使用，不需要安装 Python。
 
-> 内部命令和安装包文件名仍为 `cyber-lobster`，后续版本可能统一重命名。
 
 ### 主渠道
 

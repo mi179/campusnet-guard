@@ -2,7 +2,6 @@
 
 CampusNet Guard（校园网守护）适配 Ruijie ePortal 的校园网自动认证与断网重连工具。
 
-> 内部命令和安装包文件名仍为 `cyber-lobster`，后续版本可能统一重命名。
 
 ## 技术选型
 

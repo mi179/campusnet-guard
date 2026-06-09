@@ -81,7 +81,7 @@ campusnet start</code></pre>
             <p>不同学校不同。示例 <code>172.16.54.18</code>，实际以你学校/单位认证页为准。</p>
 
             <h3>密码安全吗？</h3>
-            <p>密码使用 DPAPI（Windows）或本地密钥 + HMAC（Linux）加密保存，不会明文落盘，不会上传。</p>
+            <p>Windows 使用 DPAPI 保护密码，Linux 使用本地密钥保护密码；不会明文落盘，不会上传。</p>
 
             <h3>Windows 提示"未知发布者"？</h3>
             <p>当前版本暂未进行代码签名。请只从官方 GitHub Releases 下载，并自行判断是否信任。点击"更多信息" → "仍要运行"即可。</p>
