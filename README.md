@@ -136,13 +136,19 @@ UPX 是可执行文件压缩工具，但会被 Windows Defender 误报为病毒�
 
 ## 🐧 Linux 使用
 
-Linux 用户通过源码运行，不提供 Linux EXE。
+Linux 用户通过源码运行，不提供 Linux EXE。适用于 NAS、软路由、小主机、实验室/办公室工位等场景。
 
 ### 安装
 
 ```bash
 git clone https://github.com/mi179/campusnet-guard.git
 cd campusnet-guard
+bash scripts/linux/install.sh
+```
+
+或手动安装：
+
+```bash
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -e .

@@ -1,0 +1,27 @@
+# CampusNet Guard — systemd user service 模板
+#
+# 使用方法:
+#   1. 将此文件复制到 ~/.config/systemd/user/
+#   2. 修改 ExecStart 和 WorkingDirectory 中的路径
+#   3. 执行: systemctl --user daemon-reload
+#   4. 启用: systemctl --user enable campusnet-guard
+#   5. 启动: systemctl --user start campusnet-guard
+#
+# 查看状态: systemctl --user status campusnet-guard
+# 查看日志: journalctl --user -u campusnet-guard -f
+# 停止:     systemctl --user stop campusnet-guard
+# 禁用:     systemctl --user disable campusnet-guard
+
+[Unit]
+Description=CampusNet Guard 校园网自动认证守护
+After=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/path/to/campusnet-guard
+ExecStart=/path/to/campusnet-guard/.venv/bin/cyber-lobster start --interval 10
+Restart=on-failure
+RestartSec=30
+
+[Install]
+WantedBy=default.target
