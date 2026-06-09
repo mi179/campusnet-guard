@@ -35,7 +35,7 @@ SERVICE_NAMES = {"DX": "电信", "YD": "移动", "LT": "联通", "校园网": "�
 VALID_SERVICES = {"DX", "YD", "LT", "校园网"}
 WATCH_INTERVAL = 10
 CHECK_TIMEOUT = 3.0
-DEFAULT_HOST = "172.16.54.18"
+DEFAULT_HOST = "172.16.54.18"  # 历史兼容示例值，不保证适用于所有校园网
 DEFAULT_SERVICE = "DX"
 
 

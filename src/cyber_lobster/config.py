@@ -53,7 +53,7 @@ class AccountConfig:
     user_id: str = ""
     password: str = ""           # 仅运行时解密使用，不以明文写入配置
     service: str = "DX"          # 运营商: DX / YD / LT / 校园网
-    host: str = "172.16.54.18"   # 认证服务器
+    host: str = "172.16.54.18"   # 历史兼容示例值，不保证适用于所有校园网
     query_string: str = ""       # 重定向 queryString（可选）
 
 
