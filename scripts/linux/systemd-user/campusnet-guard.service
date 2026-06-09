@@ -1,5 +1,8 @@
 # CampusNet Guard — systemd user service 模板
 #
+# 公开项目名: CampusNet Guard
+# 当前 CLI 命令: cyber-lobster（后续可能兼容 campusnet-guard）
+#
 # 使用方法:
 #   1. 将此文件复制到 ~/.config/systemd/user/
 #   2. 修改 ExecStart 和 WorkingDirectory 中的路径
