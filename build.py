@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """
-cyber-lobster 打包脚本 —— 编译 GUI/CLI 单文件 EXE。
+Build script for CampusNet Guard -- compile GUI/CLI single-file EXE.
 
-用法:
+Usage:
     pip install pyinstaller
     python build.py
 
-输出：
-  dist/cyber-lobster-gui.exe  普通用户图形界面
-  dist/cyber-lobster-cli.exe  排障用命令行
+Output:
+  dist/cyber-lobster-gui.exe  GUI for end users
+  dist/cyber-lobster-cli.exe  CLI for troubleshooting
 """
 
 import os
@@ -19,13 +20,11 @@ from pathlib import Path
 
 
 def find_pyinstaller() -> list[str]:
-    """查找可用的 PyInstaller 命令。
+    """Find available PyInstaller command.
 
-    优先使用当前 Python 的 -m PyInstaller，
-    若失败则依次尝试 pyinstaller / pyinstaller3.12 等命令。
-    返回 argv 列表。
+    Prefer `python -m PyInstaller`, fall back to `pyinstaller` CLI.
+    Returns argv list.
     """
-    # 先用 sys.executable 跑 -m PyInstaller --version 验证
     try:
         r = subprocess.run(
             [sys.executable, "-m", "PyInstaller", "--version"],
@@ -36,7 +35,6 @@ def find_pyinstaller() -> list[str]:
     except (OSError, subprocess.TimeoutExpired):
         pass
 
-    # 回退：直接找 pyinstaller 命令
     candidates = ["pyinstaller", "pyinstaller3.12", "pyinstaller3.11", "pyi-makespec"]
     for cmd in candidates:
         try:
@@ -51,11 +49,11 @@ def find_pyinstaller() -> list[str]:
 
 def _common_args() -> list[str]:
     return [
-        "--onefile",                    # 单文件 exe
-        "--clean",                      # 清理缓存
-        "--noconfirm",                  # 覆盖不询问
-        "--noupx",                      # 不使用 UPX 压缩
-        "--paths", "src",               # 让 PyInstaller 找到 src/cyber_lobster
+        "--onefile",
+        "--clean",
+        "--noconfirm",
+        "--noupx",
+        "--paths", "src",
         "--collect-submodules", "cyber_lobster",
         "--hidden-import", "cyber_lobster",
         "--hidden-import", "cyber_lobster.cli",
@@ -92,13 +90,13 @@ def _build_target(
         entry,
     ]
 
-    print(f"[BUILD] {name} 打包中...")
-    print(f"    命令: {' '.join(args)}")
+    print(f"[BUILD] {name} ...")
+    print(f"    cmd: {' '.join(args)}")
     print()
 
     result = subprocess.run(args, cwd=project_root)
     if result.returncode != 0:
-        print(f"\n[ERROR] {name} 打包失败 (exit {result.returncode})")
+        print(f"\n[ERROR] {name} failed (exit {result.returncode})")
         sys.exit(1)
 
     if sys.platform == "win32":
@@ -107,11 +105,11 @@ def _build_target(
         exe_path = project_root / "dist" / name
 
     if not exe_path.is_file():
-        print(f"\n[ERROR] 未找到输出文件: {exe_path}")
+        print(f"\n[ERROR] output not found: {exe_path}")
         sys.exit(1)
 
     size_mb = exe_path.stat().st_size / (1024 * 1024)
-    print(f"\n[OK] {name} 打包成功: {exe_path} ({size_mb:.1f} MB)")
+    print(f"\n[OK] {name}: {exe_path} ({size_mb:.1f} MB)")
     return exe_path
 
 
@@ -119,15 +117,11 @@ def main():
     project_root = Path(__file__).parent.resolve()
     os.chdir(project_root)
 
-    # ── 找 PyInstaller ──
     pyi_cmd = find_pyinstaller()
     if not pyi_cmd:
-        print("[ERROR] 找不到 PyInstaller。请安装:  pip install pyinstaller")
-        print()
-        print("   如果已安装但仍找不到，尝试:  python -m pip install pyinstaller")
+        print("[ERROR] PyInstaller not found. Install: pip install pyinstaller")
         sys.exit(1)
 
-    # ── 清理旧构建 ──
     for p in ["build", "dist"]:
         shutil.rmtree(p, ignore_errors=True)
     for spec in project_root.glob("*.spec"):
@@ -138,7 +132,7 @@ def main():
         _build_target(pyi_cmd, project_root, "cyber-lobster-cli", "exe_main.py", windowed=False),
     ]
 
-    print("\n[OK] 全部打包完成。普通用户请使用:")
+    print(f"\n[OK] Build complete. Output:")
     print(f"   {outputs[0]}")
 
 

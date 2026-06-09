@@ -11,6 +11,9 @@ permissions:
 jobs:
   build-and-release:
     runs-on: windows-latest    # GitHub 云 Windows 虚拟机
+    env:
+      PYTHONUTF8: "1"
+      PYTHONIOENCODING: "utf-8"
 
     steps:
     - name: 📥 1. 拉取最新代码
