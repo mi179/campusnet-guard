@@ -26,7 +26,9 @@ Cloudflare Pages 连接 GitHub 后，push 到指定分支会自动部署，不�
 
 ### 自定义域名
 
-后续配置。当前使用 Cloudflare 默认域名: campusnet-guard.pages.dev
+- 正式域名已配置: https://campusnet.journeymind.blog
+- Cloudflare Pages 默认地址作为备用: https://campusnet-guard.pages.dev
+- DNS: `campusnet.journeymind.blog` CNAME `campusnet-guard.pages.dev`
 
 ## B. 博客
 
