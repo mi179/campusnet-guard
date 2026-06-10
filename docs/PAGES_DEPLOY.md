@@ -4,7 +4,8 @@ Cloudflare Pages 连接 GitHub 后，push 到指定分支会自动部署，不�
 
 ## A. 产品官网
 
-**已部署**: https://campusnet-guard.pages.dev
+**正式域名**: https://campusnet.journeymind.blog
+**备用地址**: https://campusnet-guard.pages.dev
 
 | 参数 | 值 |
 |------|-----|

@@ -9,7 +9,7 @@
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue)](https://python.org)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux-lightgrey)]()
-[![Official Site](https://img.shields.io/badge/Official-Site-blue)](https://campusnet-guard.pages.dev)
+[![Official Site](https://img.shields.io/badge/Official-Site-blue)](https://campusnet.journeymind.blog)
 
 </div>
 
@@ -55,12 +55,9 @@ CampusNet Guard（校园网守护）是适配 Ruijie ePortal 的校园网自动�
 
 👉 [GitHub Releases 下载页](https://github.com/mi179/campusnet-guard/releases/latest)
 
-### 国内备用渠道
+### 国内备用下载
 
-如果 GitHub 直连下载慢，可以通过以下方式获取：
-
-- **官方页面**：项目介绍、下载入口、教程、FAQ（计划中，参见 [官方页面方案](#官方页面方案)）
-- **GitHub 代理下载**：参见下方 [GitHub 下载慢怎么办](#q-github-下载慢怎么办)
+如果 GitHub 直连下载慢，见 [docs/MIRROR_DOWNLOADS.md](docs/MIRROR_DOWNLOADS.md) 或[官网](https://campusnet.journeymind.blog)。
 
 > ⚠️ **安全提醒**：请只从 GitHub Releases 或官方页面下载，不要使用来路不明的 exe 文件。
 
