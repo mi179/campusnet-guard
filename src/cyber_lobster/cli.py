@@ -46,6 +46,10 @@ from cyber_lobster.system import (
     format_memory,
 )
 from cyber_lobster.network import check_gateways, check_connectivity
+from cyber_lobster.network_environment import (
+    collect_network_environment_report,
+    format_network_environment_lines,
+)
 
 
 # ═══════════════════════════════════════════════
@@ -381,7 +385,7 @@ def cmd_switch(args: argparse.Namespace) -> int:
         account = cfg.get_account(new_id)
         return _login_account(account, label="登录") if account else 1
 
-    info("如需立即上线新账号，可运行: cyber-lobster switch <账号ID> --login")
+        info("如需立即上线新账号，可运行: campusnet switch <账号ID> --login")
     return 0
 
 
@@ -661,6 +665,11 @@ def cmd_doctor(args: argparse.Namespace) -> int:
     else:
         print("外网状态: [断开] 未连通或被认证页拦截")
         print("建议: 可运行 campusnet test 验证登录，或 campusnet start 自动重连")
+
+    print()
+    print("代理/VPN 兼容性:")
+    for line in format_network_environment_lines(collect_network_environment_report()):
+        print(line)
 
     return 0
 

@@ -284,7 +284,19 @@ git clone https://github.com/mi179/campusnet-guard.git
 
 ### Q: 换电脑后密码不可用？
 
-Windows DPAPI 加密的密码绑定当前系统用户，换电脑/换用户后需要重新运行 `cyber-lobster setup` 输入密码。
+Windows DPAPI 加密的密码绑定当前系统用户，换电脑/换用户后需要重新运行 `campusnet setup` 输入密码。
+
+### Q: 开了系统代理、VPN 或 TUN 模式，需要先关掉吗？
+
+通常不用先手动关闭。CampusNet Guard 会尽量让校园网认证请求直连认证服务器，不走环境代理。
+
+如果登录失败，先运行：
+
+```bash
+campusnet doctor
+```
+
+看输出里的"代理/VPN 兼容性"。普通用户可以先临时暂停代理/VPN/TUN 后重试；高级用户可以把认证服务器地址加入直连规则。
 
 ### Q: 开机自启动找不到？
 

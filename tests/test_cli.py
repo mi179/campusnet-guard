@@ -141,6 +141,28 @@ class TestCliMain(TestCase):
 
         self.assertEqual(code, 1)
 
+    def test_doctor_prints_proxy_vpn_compatibility_report(self):
+        cli = import_cli()
+        cfg = GlobalConfig(
+            current_user_id="u1",
+            accounts={"u1": {"password": "pw", "service": "DX", "host": "portal"}},
+        )
+        report = SimpleNamespace()
+
+        with patch.object(cli, "load_config", return_value=cfg):
+            with patch.object(cli, "check_connectivity", return_value=True):
+                with patch.object(cli, "collect_network_environment_report", return_value=report) as collect:
+                    with patch.object(
+                        cli,
+                        "format_network_environment_lines",
+                        return_value=["系统代理: [正常] 未开启"],
+                    ) as format_lines:
+                        code = cli.cmd_doctor(SimpleNamespace())
+
+        self.assertEqual(code, 0)
+        collect.assert_called_once_with()
+        format_lines.assert_called_once_with(report)
+
     def test_help_command_prints_builtin_guide(self):
         cli = import_cli()
         code = cli.cmd_help(SimpleNamespace())

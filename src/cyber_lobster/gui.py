@@ -30,6 +30,10 @@ from cyber_lobster.auth_service import (
 )
 from cyber_lobster.constants import DEFAULT_HOST, SERVICE_NAMES, SERVICE_VALUES
 from cyber_lobster.network import check_connectivity
+from cyber_lobster.network_environment import (
+    collect_network_environment_report,
+    format_network_environment_lines,
+)
 from cyber_lobster.startup import (
     StartupError,
     disable_startup,
@@ -439,7 +443,8 @@ class CyberLobsterGUI(tk.Tk):
     def _check_network_async(self) -> None:
         def work() -> None:
             online = check_connectivity(timeout=float(self.timeout_var.get()))
-            self.events.put(("network", online))
+            report = collect_network_environment_report()
+            self.events.put(("network", (online, report)))
 
         threading.Thread(target=work, daemon=True).start()
 
@@ -627,9 +632,16 @@ class CyberLobsterGUI(tk.Tk):
                 if event == "log":
                     self._log(str(payload))
                 elif event == "network":
-                    online = bool(payload)
+                    if isinstance(payload, tuple):
+                        online, report = payload
+                    else:
+                        online, report = bool(payload), None
                     self.status_var.set("状态: 外网已连通" if online else "状态: 外网未连通")
                     self._log("外网已连通。" if online else "外网未连通或被认证页拦截。")
+                    if report is not None:
+                        self._log("代理/VPN 兼容性检查：")
+                        for line in format_network_environment_lines(report):
+                            self._log(line)
                 elif event == "login":
                     label, result = payload
                     if result.success:

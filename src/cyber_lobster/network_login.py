@@ -92,6 +92,10 @@ def fetch_public_key(
     own_session = False
     if session is None:
         session = requests.Session()
+        # Campus portal authentication should talk to the portal directly.
+        # System/HTTP proxy environment variables can route the request away
+        # from the campus network and make authentication fail mysteriously.
+        session.trust_env = False
         own_session = True
 
     try:
@@ -224,6 +228,10 @@ def create_session(retries: int = DEFAULT_MAX_RETRIES,
                    backoff: float = 0.5) -> requests.Session:
     """创建带连接级重试的 requests Session。"""
     session = requests.Session()
+    # Do not inherit HTTP_PROXY/HTTPS_PROXY from the environment. Campus
+    # authentication endpoints are normally only reachable on the local campus
+    # network, so using an upstream proxy often breaks login.
+    session.trust_env = False
 
     retry_strategy = Retry(
         total=retries,
@@ -456,7 +464,9 @@ def detect_query_string(
         未捕获到时返回空字符串。
     """
     try:
-        resp = requests.get(test_url, timeout=timeout, allow_redirects=False)
+        session = requests.Session()
+        session.trust_env = False
+        resp = session.get(test_url, timeout=timeout, allow_redirects=False)
     except requests.RequestException:
         return ""
 
@@ -563,7 +573,8 @@ def logout(host: str = DEFAULT_HOST, timeout: int = 5) -> LoginResult:
 
     for url, params in zip(endpoints, params_list):
         try:
-            resp = requests.post(url, data=params, timeout=timeout)
+            session = create_session(retries=1)
+            resp = session.post(url, data=params, timeout=timeout)
             if resp.status_code == 200:
                 body = _decode_response(resp.content)
                 logger.info("注销请求已发送 (%s)", url)

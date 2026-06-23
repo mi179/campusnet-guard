@@ -53,7 +53,7 @@ campusnet setup
 
 按提示选择运营商、输入学号和密码。密码输入时不会显示，这是正常的。
 
-> `cyber-lobster add` 是 `setup` 的别名，效果相同。
+> `campusnet add` 是 `setup` 的别名，效果相同。
 
 **认证服务器地址**：不同学校的认证服务器地址可能不同。添加账号时会提示确认，示例 `172.16.54.18`，请以学校网络中心提供的地址为准。
 
@@ -264,6 +264,18 @@ source .venv/bin/activate
 2. 按上述步骤安装
 3. 使用 tmux 或 screen 后台运行
 4. 如需开机自启，配置 systemd user service
+
+### Q: 开了代理、VPN 或 TUN 模式，需要先关掉吗？
+
+不一定。CampusNet Guard 会尽量让认证请求直连校园网认证服务器，不继承环境变量里的 HTTP/HTTPS 代理。
+
+如果认证失败，先运行：
+
+```bash
+campusnet doctor
+```
+
+查看"代理/VPN 兼容性"提示。普通用户可以先临时暂停代理/VPN/TUN 后重试；高级用户可以把认证服务器地址加入代理工具的直连规则。
 
 ### Q: 认证服务器地址是多少？
 

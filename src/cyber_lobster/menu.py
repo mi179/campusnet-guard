@@ -114,7 +114,7 @@ def run_watch_loop(cfg: GlobalConfig) -> int:
     """断网自动重连监控 — 实时状态 + B返回/Q退出/Ctrl+C返回。"""
     account = cfg.get_current_account()
     if not account:
-        error("配置中没有有效账号，请运行 cyber-lobster setup")
+        error("配置中没有有效账号，请运行 campusnet setup")
         return 1
     if not password_available(account):
         error(f"账号 {account.user_id} 的密码不可用，请重新添加该账号")
