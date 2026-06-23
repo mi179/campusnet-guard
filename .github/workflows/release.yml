@@ -34,11 +34,6 @@ jobs:
       run: |
         python build.py
 
-    - name: Rename assets
-      run: |
-        Copy-Item dist\cyber-lobster-gui.exe dist\campusnet-guard-gui.exe
-        Copy-Item dist\cyber-lobster-cli.exe dist\campusnet-guard-cli.exe
-
     - name: Package zip
       run: |
         Compress-Archive -Path dist\campusnet-guard-gui.exe, dist\campusnet-guard-cli.exe, docs\QUICK_START_WINDOWS.md -DestinationPath dist\campusnet-guard-windows.zip

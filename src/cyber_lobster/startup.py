@@ -118,7 +118,7 @@ def _sibling_executable(current: Path, mode: str) -> Path:
     if sys.platform != "win32":
         return current
 
-    wanted = "cyber-lobster-gui.exe" if mode == "gui" else "cyber-lobster-cli.exe"
+    wanted = "campusnet-guard-gui.exe" if mode == "gui" else "campusnet-guard-cli.exe"
     sibling = current.with_name(wanted)
     if sibling.exists():
         return sibling

@@ -150,7 +150,7 @@ def _probe_connectivity(probe: ConnectivityProbe, timeout: float) -> bool:
     request = Request(
         probe.url,
         headers={
-            "User-Agent": "cyber-lobster/1.0",
+            "User-Agent": "campusnet-guard/1.0",
             "Cache-Control": "no-cache",
         },
     )

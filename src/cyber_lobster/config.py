@@ -4,7 +4,7 @@
 Windows: %APPDATA%\\cyber-lobster\\config.json
 Linux:   ~/.config/cyber-lobster/config.json
 
-高级用户可通过 `cyber-lobster storage --set <路径>` 自定义位置。
+高级用户可通过 `campusnet storage <路径>` 自定义位置。
 支持多账号，结构如下:
 
 {

@@ -8,8 +8,8 @@ Usage:
     python build.py
 
 Output:
-  dist/cyber-lobster-gui.exe  GUI for end users
-  dist/cyber-lobster-cli.exe  CLI for troubleshooting
+  dist/campusnet-guard-gui.exe  GUI for end users
+  dist/campusnet-guard-cli.exe  CLI for troubleshooting
 """
 
 import os
@@ -128,8 +128,8 @@ def main():
         spec.unlink(missing_ok=True)
 
     outputs = [
-        _build_target(pyi_cmd, project_root, "cyber-lobster-gui", "gui_main.py", windowed=True),
-        _build_target(pyi_cmd, project_root, "cyber-lobster-cli", "exe_main.py", windowed=False),
+        _build_target(pyi_cmd, project_root, "campusnet-guard-gui", "gui_main.py", windowed=True),
+        _build_target(pyi_cmd, project_root, "campusnet-guard-cli", "exe_main.py", windowed=False),
     ]
 
     print(f"\n[OK] Build complete. Output:")

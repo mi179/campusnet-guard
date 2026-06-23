@@ -45,7 +45,7 @@ from cyber_lobster.startup import (
 class CyberLobsterGUI(tk.Tk):
     def __init__(self, autostart: bool = False) -> None:
         super().__init__()
-        self.title(f"cyber-lobster {__version__}")
+        self.title(f"CampusNet Guard {__version__}")
         self.geometry("860x560")
         self.minsize(780, 500)
 
@@ -92,7 +92,7 @@ class CyberLobsterGUI(tk.Tk):
 
         ttk.Label(
             header,
-            text="cyber-lobster 校园网自动重连",
+            text="CampusNet Guard 校园网守护",
             font=("Microsoft YaHei UI", 16, "bold"),
         ).grid(row=0, column=0, sticky="w")
         ttk.Label(header, textvariable=self.status_var).grid(row=1, column=0, sticky="w", pady=(4, 0))
@@ -259,7 +259,7 @@ class CyberLobsterGUI(tk.Tk):
 
     def _insert_help(self, text: tk.Text) -> None:
         sections = [
-            ("title", "cyber-lobster 使用说明\n"),
+            ("title", "CampusNet Guard 使用说明\n"),
             ("section", "第一次使用，只做三件事\n"),
             ("body", "1. 打开“高级”页，点击“添加账号”。\n"),
             ("body", "2. 选择运营商，输入学号和密码，点击“保存并验证”。\n"),

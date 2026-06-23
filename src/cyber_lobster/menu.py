@@ -123,7 +123,7 @@ def run_watch_loop(cfg: GlobalConfig) -> int:
     svc = SERVICE_NAMES.get(account.service, account.service)
     _clear_screen()
     print()
-    print(f"  🦞  cyber-lobster v{__version__}  —  守护监控模式")
+    print(f"  CampusNet Guard v{__version__}  —  守护监控模式")
     print(f"  ═══════════════════════════════════════════")
     print(f"  👤 账号: {account.user_id} ({svc})")
     print(f"  📡 状态: ⏳ 首次检测...")

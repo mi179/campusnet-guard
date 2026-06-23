@@ -23,9 +23,9 @@
    - 让能访问 GitHub 的同学帮你下载
    - 通过微信/U盘/局域网传给你
 
-3. **使用备用下载渠道**（计划中）
-   - 项目计划提供 Cloudflare Pages 官方页面
-   - 提供备用下载入口
+3. **使用备用下载渠道**
+   - 打开官网：https://campusnet.journeymind.blog
+   - 或查看 `docs/MIRROR_DOWNLOADS.md` 中的备用下载说明
 
 > ⚠️ **安全提醒**：请只从 GitHub Releases 或官方页面下载，不要使用来路不明的 exe 文件，可能被篡改或捆绑病毒。
 

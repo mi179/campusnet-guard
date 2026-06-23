@@ -1,4 +1,4 @@
-"""cyber-lobster CLI 主入口（argparse）。"""
+"""CampusNet Guard CLI 主入口（argparse）。"""
 
 import argparse
 import json
@@ -58,8 +58,8 @@ from cyber_lobster.network_environment import (
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        prog="cyber-lobster",
-        description="cyber-lobster 校园网自动重连工具",
+        prog="campusnet",
+        description="CampusNet Guard 校园网自动认证与断网重连工具",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=(
             "常用命令（campusnet 是推荐入口，cyber-lobster 仍兼容）:\n"
@@ -70,7 +70,7 @@ def build_parser() -> argparse.ArgumentParser:
             "  campusnet doctor           检查配置和网络状态\n"
         ),
     )
-    parser.add_argument("--version", action="version", version=f"cyber-lobster {__version__}")
+    parser.add_argument("--version", action="version", version=f"campusnet {__version__}")
 
     sub = parser.add_subparsers(dest="command", required=True)
 
@@ -256,15 +256,15 @@ def cmd_storage(args: argparse.Namespace) -> int:
     print(f"环境变量覆盖: {ENV_CONFIG_PATH}")
     print()
     print("普通用户无需修改。高级用户可运行:")
-    print("  cyber-lobster storage D:\\MyData\\cyber-lobster")
-    print("  cyber-lobster storage --reset")
+    print("  campusnet storage D:\\MyData\\cyber-lobster")
+    print("  campusnet storage --reset")
     return 0
 
 
 def cmd_setup(args: argparse.Namespace) -> int:
     """交互式配置向导。"""
     print()
-    print("cyber-lobster 配置向导")
+    print("CampusNet Guard 配置向导")
     print("═" * 40)
     print(f"  配置将保存到: {config_path()}")
     print()
@@ -456,7 +456,7 @@ def cmd_watch(args: argparse.Namespace) -> int:
             if online:
                 if fail_count > 0:
                     success(f"网络已恢复（之前断连 {fail_count} 次）")
-                    notify_win32("cyber-lobster", "校园网已自动重新连通！")
+                    notify_win32("CampusNet Guard", "校园网已自动重新连通！")
                     fail_count = 0
                 else:
                     info("网络正常")
@@ -468,7 +468,7 @@ def cmd_watch(args: argparse.Namespace) -> int:
                     result = login_account(account, max_session_attempts=1, request_retries=2)
                     if result.success:
                         success("重连成功")
-                        notify_win32("cyber-lobster", "校园网已自动重新连通！")
+                        notify_win32("CampusNet Guard", "校园网已自动重新连通！")
                         fail_count = 0
                     else:
                         warn(f"重连失败: {error_text(result, 60)}")
@@ -510,7 +510,7 @@ def cmd_autostart(args: argparse.Namespace) -> int:
         except StartupError as exc:
             error(str(exc))
             return 1
-        print("cyber-lobster 开机自动守护")
+        print("CampusNet Guard 开机自动守护")
         print("=" * 40)
         if not status.supported:
             print(f"状态: 不支持")
@@ -521,8 +521,8 @@ def cmd_autostart(args: argparse.Namespace) -> int:
         if status.command:
             print(f"命令: {status.command}")
         print()
-        print("开启: cyber-lobster autostart enable")
-        print("关闭: cyber-lobster autostart disable")
+        print("开启: campusnet autostart enable")
+        print("关闭: campusnet autostart disable")
         return 0
 
     if action == "enable":
@@ -561,7 +561,7 @@ def cmd_autostart(args: argparse.Namespace) -> int:
 # ═══════════════════════════════════════════════
 
 def cmd_status(args: argparse.Namespace) -> int:
-    print("cyber-lobster - 系统状态")
+    print("CampusNet Guard - 系统状态")
     print("=" * 40)
 
     temp = get_cpu_temp()
@@ -600,7 +600,7 @@ def cmd_ping(args: argparse.Namespace) -> int:
     gw_list = ["10.0.0.1", "192.168.1.1", "1.1.1.1"]
     count = 3
 
-    print(f"cyber-lobster - Ping 检测 ({count} 次)")
+    print(f"CampusNet Guard - Ping 检测 ({count} 次)")
     print("=" * 40)
     results = check_gateways(gw_list, count=count)
     for r in results:
@@ -622,7 +622,7 @@ def cmd_check(args: argparse.Namespace) -> int:
 
 def cmd_doctor(args: argparse.Namespace) -> int:
     """普通用户诊断：不登录，只检查配置和网络状态。"""
-    print("cyber-lobster - 诊断")
+    print("CampusNet Guard - 诊断")
     print("=" * 40)
 
     cfg = load_config()
@@ -696,8 +696,8 @@ def cmd_login(args: argparse.Namespace) -> int:
         user_id = args.user_id
         host = args.host
     else:
-        print("用法: cyber-lobster login <学号>")
-        print("  或: cyber-lobster login --current")
+        print("用法: campusnet login <学号>")
+        print("  或: campusnet login --current")
         return 1
 
     info(f"登录 {host} - {user_id} ({SERVICE_NAMES.get(service, service)})")

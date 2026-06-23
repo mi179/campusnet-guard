@@ -1,96 +1,73 @@
-# 官方页面方案
+# 官方页面与下载渠道说明
 
-CampusNet Guard（校园网守护）适配 Ruijie ePortal 的校园网自动认证与断网重连工具。
+## 当前状态
 
+CampusNet Guard 官网已部署在 Cloudflare Pages：
 
-## 技术选型
+- 正式域名：`https://campusnet.journeymind.blog`
+- Pages 备用域名：`https://campusnet-guard.pages.dev`
+- 主下载：GitHub Releases latest
+- 国内备用：移动云盘，见 `docs/MIRROR_DOWNLOADS.md`
 
-使用 **Cloudflare Pages** 托管静态官方页面。
+官网源文件位于仓库 `site/` 目录，推送到 GitHub 后由 Cloudflare Pages 自动部署。
 
-### 为什么选 Cloudflare Pages
+## 官网职责
 
-- **静态托管**：HTML/Markdown，不需要服务器
-- **免费额度**：个人项目完全够用
-- **自定义域名**：可以绑定自己的域名
-- **全球 CDN**：访问速度不错
-- **自动部署**：推送到 Git 仓库自动更新
+官网不是完整文档站，当前阶段只做四件事：
+
+1. 让普通用户知道这是什么。
+2. 给出 Windows 下载入口。
+3. 给出 Linux 源码安装路径。
+4. 明确安全提醒和免责声明。
+
+详细教程仍放在 README 和 `docs/` 目录，避免官网维护成本过高。
 
 ## 页面内容
 
-官方页面应包含以下内容：
-
 ### 首页
-- 项目名称和一句话介绍
-- 下载按钮（Windows EXE）
-- 功能特性列表
-- 截图/演示
 
-### 下载页
-- GitHub Releases 主链接
-- 备用下载渠道说明
-- 各平台下载说明
+- 产品名和一句话介绍。
+- Windows 下载按钮，指向 GitHub Releases latest。
+- Linux 使用入口，指向 GitHub 仓库。
+- 国内备用下载说明。
+- 常见问题和免责声明。
 
-### 教程页
-- Windows 快速开始（图文）
-- Linux 安装指南
-- 常见问题解答
+### 暂不拆分多页面
 
-### 免责声明页
-- 使用范围和限制
-- 用户责任
-- 安全说明
-
-### 关于页
-- GitHub 项目链接
-- Issue 反馈入口
-- 版本历史
+当前 `site/` 使用单页静态 HTML。项目体量还小，暂不引入路由、构建工具或多页面文档系统。
 
 ## 下载渠道设计
 
-### 主渠道：GitHub Releases
+| 渠道 | 说明 | 状态 |
+|------|------|------|
+| GitHub Releases | 源头，版本记录最完整 | 主渠道 |
+| Cloudflare Pages 官网 | 下载说明和备用链接入口 | 已启用 |
+| 移动云盘 | 国内备用下载 | 已启用 |
+| Cloudflare R2 | 直链对象存储 | 暂缓 |
+| 个人博客 | 项目故事和教程入口 | 已启用 |
 
-- 作为源头，版本记录最完整
-- 所有其他渠道都应链接回 GitHub Releases
+## R2 暂缓原因
 
-### 备用渠道
+Cloudflare R2 适合放 zip/exe 直链，但当前阶段先不引入：
 
-| 渠道 | 说明 | 适用场景 | 状态 |
-|------|------|---------|------|
-| Cloudflare Pages 官方页面 | 中转说明 + 备用链接入口 | 国内用户 | 计划中 |
-| Cloudflare R2 + 自定义域名 | exe/zip 直链 | 国内下载 | 计划中 |
-| GitHub Release 文件代理 | 临时备用 | 临时 | 可用性不稳定 |
-| 个人博客页面 | 多个下载入口汇总 | 国内用户 | 计划中 |
+- 多一个上传和校验流程。
+- 需要维护对象命名和历史版本。
+- 用户仍应以 GitHub Releases 为可信源。
 
-### Cloudflare R2 方案
-
-R2 是 Cloudflare 的对象存储服务，适合放 exe/zip 文件：
-
-- 免费额度：10 GB 存储 + 1000 万次读取/月
-- 可以绑定自定义域名
-- 国内访问速度尚可
-- 适合放发布包的直链
-
-使用方式：
-1. 上传 exe/zip 到 R2 存储桶
-2. 绑定自定义域名（如 `dl.cyber-lobster.example.com`）
-3. 在官方页面提供直链下载
-
-## 域名方案
-
-建议域名（待注册）：
-
-- `cyber-lobster.pages.dev`（Cloudflare Pages 默认域名）
-- `cyber-lobster.example.com`（自定义域名，如果有）
-
-## 部署步骤
-
-1. 创建 Cloudflare Pages 项目
-2. 连接 GitHub 仓库（或单独的 pages 仓库）
-3. 配置自定义域名（可选）
-4. 推送代码自动部署
+等发布频率稳定后，再考虑 `dl.journeymind.blog` 或类似子域名承载 R2 下载。
 
 ## 安全提醒
 
-在所有下载页面都要提醒：
+所有下载页面都应保持同一口径：
 
-> ⚠️ 请只从 GitHub Releases 或官方页面下载，不要使用来路不明的 exe 文件。
+> 请优先从 GitHub Releases 或官网入口下载，不要使用来路不明的 exe 文件。备用网盘可能失效，后续会补充 SHA256 校验。
+
+## Cloudflare Pages 配置
+
+- Repository：`mi179/campusnet-guard`
+- Production branch：`main`
+- Build command：`exit 0`
+- Build output directory：`site`
+- Root directory：仓库根目录
+
+部署不依赖本地电脑一直开着。

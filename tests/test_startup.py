@@ -55,7 +55,7 @@ class TestStartup(TestCase):
                 status = startup.get_startup_status()
                 self.assertFalse(status.enabled)
 
-                command = r'"C:\Apps\cyber-lobster-gui.exe" --autostart'
+                command = r'"C:\Apps\campusnet-guard-gui.exe" --autostart'
                 enabled = startup.enable_startup(command=command)
                 self.assertTrue(enabled.enabled)
                 self.assertEqual(fake_winreg.values[startup.APP_NAME], command)
@@ -70,8 +70,8 @@ class TestStartup(TestCase):
 
     def test_build_startup_command_prefers_gui_sibling_when_frozen(self):
         with TemporaryDirectory() as tmp:
-            current = Path(tmp) / "cyber-lobster-cli.exe"
-            gui = Path(tmp) / "cyber-lobster-gui.exe"
+            current = Path(tmp) / "campusnet-guard-cli.exe"
+            gui = Path(tmp) / "campusnet-guard-gui.exe"
             current.write_text("", encoding="utf-8")
             gui.write_text("", encoding="utf-8")
 
@@ -80,5 +80,5 @@ class TestStartup(TestCase):
                     with patch.object(startup.sys, "frozen", True, create=True):
                         command = startup.build_startup_command("gui")
 
-        self.assertIn("cyber-lobster-gui.exe", command)
+        self.assertIn("campusnet-guard-gui.exe", command)
         self.assertIn("--autostart", command)

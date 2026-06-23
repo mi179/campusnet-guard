@@ -7,7 +7,7 @@
   - Cookie 管理（自动跟踪 JSESSIONID）
   - 请求级 / 会话级重试 + 指数退避
 
-直接从 `cyber-lobster login --from-config` 调用。
+由 `campusnet login --current` 或后台守护流程调用。
 """
 
 import json

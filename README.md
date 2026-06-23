@@ -192,7 +192,7 @@ campusnet start
 # screen -r campusnet 重新连接
 ```
 
-### systemd user service（后续计划）
+### systemd user service（高级配置）
 
 仓库提供 systemd user service 模板，但不会自动启用。高级用户可手动配置：
 
@@ -349,35 +349,13 @@ campusnet doctor
 
 ---
 
-## 官方页面方案
+## 官网与备用下载
 
-计划使用 Cloudflare Pages 托管静态官方页面，提供以下内容：
+- 官网：<https://campusnet.journeymind.blog>
+- GitHub Releases：<https://github.com/mi179/campusnet-guard/releases/latest>
+- 国内备用下载：见 [docs/MIRROR_DOWNLOADS.md](docs/MIRROR_DOWNLOADS.md)
 
-- **项目介绍**：功能说明、截图、下载按钮
-- **下载入口**：GitHub Releases 主链接 + 备用下载渠道
-- **快速教程**：Windows 快速开始、Linux 安装指南
-- **常见问题**：FAQ 页面
-- **免责声明**：使用条款和责任说明
-- **GitHub 链接**：指向项目仓库
-
-### 为什么用 Cloudflare Pages
-
-- 静态 HTML/Markdown，不需要服务器
-- 免费额度足够个人项目使用
-- 可以绑定自定义域名
-- 全球 CDN，国内访问速度尚可
-
-### 备用下载渠道设计
-
-| 渠道 | 说明 | 优先级 |
-|------|------|--------|
-| GitHub Releases | 源头，版本记录最完整 | 主 |
-| Cloudflare Pages 官方页面 | 中转说明 + 备用链接入口 | 备用 |
-| Cloudflare R2 + 自定义域名 | exe/zip 直链，适合国内下载 | 备用（计划中） |
-| GitHub Release 文件代理 | 临时备用，可用性不稳定 | 备用（临时） |
-| 个人博客页面 | 多个下载入口汇总 | 备用（计划中） |
-
-> ⚠️ **安全提醒**：无论从哪个渠道下载，都请验证文件来源。优先从 GitHub Releases 或官方页面下载，避免来路不明的 exe 文件。
+> ⚠️ **安全提醒**：无论从哪个渠道下载，都请优先核对 GitHub Releases 或官网说明，避免来路不明的 exe 文件。
 
 ---
 
