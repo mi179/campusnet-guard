@@ -1,0 +1,478 @@
+#!/usr/bin/env python3
+"""Interactive terminal menu for no-argument CLI/EXE launches."""
+
+import sys
+import time
+
+import getpass
+from datetime import datetime
+
+from cyber_lobster import __version__
+from cyber_lobster.logger import info, warn, error, success, notify_win32
+from cyber_lobster.config import (
+    load as load_config,
+    save as save_config,
+    config_path,
+    GlobalConfig,
+    AccountConfig,
+)
+from cyber_lobster.auth_service import (
+    error_text,
+    login_account,
+    login_plain,
+    logout_host,
+    password_available,
+    response_message,
+)
+from cyber_lobster.constants import (
+    CHECK_TIMEOUT,
+    DEFAULT_HOST,
+    SERVICE_MENU,
+    SERVICE_NAMES,
+    WATCH_INTERVAL,
+)
+from cyber_lobster.network import check_connectivity
+from cyber_lobster.help_text import print_user_guide
+
+
+def _ts() -> str:
+    """返回当前时间戳字符串 [YYYY-MM-DD HH:mm:ss]"""
+    return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+
+def _drain_pending_input() -> None:
+    """Clear buffered key presses before returning to line-input menus."""
+    try:
+        if sys.platform == "win32":
+            import msvcrt
+
+            while msvcrt.kbhit():
+                msvcrt.getch()
+        else:
+            import select
+
+            while select.select([sys.stdin], [], [], 0)[0]:
+                sys.stdin.read(1)
+    except Exception:
+        pass
+
+
+def run_setup_wizard() -> AccountConfig | None:
+    """交互式配置向导，登录验证成功后返回 AccountConfig。"""
+    print()
+    print("  ── 首次使用，请配置认证信息 ──")
+    print()
+
+    # 运营商
+    print("  请选择运营商:")
+    print("    1. 电信 (DX)")
+    print("    2. 移动 (YD)")
+    print("    3. 联通 (LT)")
+    print("    4. 校园网")
+    while True:
+        choice = input("  请选择 [1]: ").strip()
+        if not choice or choice in SERVICE_MENU:
+            service = SERVICE_MENU.get(choice, "DX")
+            break
+        print("  输入无效，请选 1/2/3/4")
+
+    user_id = input("  学号: ").strip()
+    while not user_id:
+        user_id = input("  学号不能为空: ").strip()
+
+    password = getpass.getpass("  密码（输入时不显示，正常敲回车即可）: ")
+    while not password:
+        password = getpass.getpass("  密码不能为空: ")
+
+    host_input = input(f"  认证服务器地址 [{DEFAULT_HOST}]: ").strip()
+    host = host_input or DEFAULT_HOST
+
+    svc_name = SERVICE_NAMES.get(service, service)
+    print()
+    info(f"确认: {svc_name}({service}) / {user_id}")
+    info("正在验证登录...")
+
+    # 验证
+    result = login_plain(user_id, password, service, host, max_session_attempts=1, request_retries=2)
+
+    if not result.success:
+        error(f"登录失败: {error_text(result)}")
+        print("  请重新运行本程序重试。")
+        return None
+
+    success(f"登录成功: {response_message(result.body)[:80]}")
+
+    return AccountConfig(
+        user_id=user_id,
+        password=password,
+        service=service,
+        host=host,
+    )
+
+
+def run_watch_loop(cfg: GlobalConfig) -> int:
+    """断网自动重连监控 — 实时状态 + B返回/Q退出/Ctrl+C返回。"""
+    account = cfg.get_current_account()
+    if not account:
+        error("配置中没有有效账号，请运行 cyber-lobster setup")
+        return 1
+    if not password_available(account):
+        error(f"账号 {account.user_id} 的密码不可用，请重新添加该账号")
+        return 1
+
+    svc = SERVICE_NAMES.get(account.service, account.service)
+    _clear_screen()
+    print()
+    print(f"  🦞  cyber-lobster v{__version__}  —  守护监控模式")
+    print(f"  ═══════════════════════════════════════════")
+    print(f"  👤 账号: {account.user_id} ({svc})")
+    print(f"  📡 状态: ⏳ 首次检测...")
+    print(f"  ───────────────────────────────────────────")
+    print(f"  [ B 返回菜单 | Q 退出程序 | Ctrl+C 返回菜单 ]")
+    print()
+
+    fail_count = 0
+    reconnect_count = 0
+    import sys as _sys
+
+    # Linux: 设置终端为 raw 模式以获取单次按键
+    _old_termios = None
+    if _sys.platform != "win32":
+        try:
+            import termios as _termios
+            import tty as _tty
+            _old_termios = _termios.tcgetattr(_sys.stdin.fileno())
+            _tty.setraw(_sys.stdin.fileno())
+        except Exception:
+            pass
+
+    try:
+        while True:
+            try:
+                online = check_connectivity(timeout=CHECK_TIMEOUT)
+            except Exception:
+                online = False
+
+            if online:
+                if fail_count > 0:
+                    msg = f"✅ 网络已恢复（之前断连 {fail_count} 次，共重连 {reconnect_count} 次）"
+                    notify_win32("🦞 CampusNet Guard", "校园网已自动重新连通！")
+                    fail_count = 0
+                else:
+                    msg = "✅ 网络正常"
+                print(f"\r  📡 状态: ✅ 在线 | {_ts()} | {msg}", end="", flush=True)
+            else:
+                fail_count += 1
+                msg = f"❌ 断连 ({fail_count})，正在重连..."
+                print(f"\r  📡 状态: ❌ 断连 | {_ts()} | {msg:<50s}", end="", flush=True)
+
+                try:
+                    result = login_account(account, max_session_attempts=1, request_retries=2)
+                    if result.success:
+                        reconnect_count += 1
+                        msg = f"✅ 重连成功 (累计 {reconnect_count} 次)"
+                        notify_win32("🦞 CampusNet Guard", "校园网已自动重新连通！")
+                        fail_count = 0
+                    else:
+                        msg = f"❌ 重连失败: {error_text(result, 60)}"
+                except Exception as exc:
+                    msg = f"❌ 异常: {type(exc).__name__}"
+                print(f"\r  📡 状态: {'✅ 在线' if fail_count == 0 else '❌ 断连'} | {_ts()} | {msg:<50s}", end="", flush=True)
+
+            # 分秒等待 + 检测键盘
+            for _ in range(WATCH_INTERVAL):
+                time.sleep(1)
+                try:
+                    if _sys.platform == "win32":
+                        import msvcrt as _m
+                        if _m.kbhit():
+                            k = _m.getch().decode("utf-8", errors="ignore").lower()
+                            if k == "b":
+                                _drain_pending_input()
+                                print("\n")
+                                info("返回主菜单")
+                                return 0
+                            elif k == "q":
+                                print("\n")
+                                info("再见")
+                                _sys.exit(0)
+                            elif k == "\x03":  # Ctrl+C
+                                _drain_pending_input()
+                                print("\n")
+                                info("返回主菜单")
+                                return 0
+                    else:
+                        import select as _sel
+                        if _sel.select([_sys.stdin], [], [], 0)[0]:
+                            k = _sys.stdin.read(1).lower()
+                            if k == "b":
+                                _drain_pending_input()
+                                print("\n")
+                                info("返回主菜单")
+                                return 0
+                            elif k == "q":
+                                print("\n")
+                                info("再见")
+                                _sys.exit(0)
+                            elif k == "\x03":  # Ctrl+C
+                                _drain_pending_input()
+                                print("\n")
+                                info("返回主菜单")
+                                return 0
+                except Exception:
+                    pass
+
+    except KeyboardInterrupt:
+        print("\n")
+        info("返回主菜单")
+        return 0
+    except Exception as exc:
+        print("\n")
+        error(f"意外错误: {type(exc).__name__}: {exc}")
+        input("  按 Enter 返回主菜单...")
+        return 1
+    finally:
+        # 恢复终端设置
+        if _old_termios is not None:
+            try:
+                import termios as _termios
+                _termios.tcsetattr(_sys.stdin.fileno(), _termios.TCSADRAIN, _old_termios)
+            except Exception:
+                pass
+
+
+# ── 外观系统 2.0：内置皮肤库 ──
+
+# ── 唯一极客 Logo ──
+
+LOGO = r"""
+██████╗ ██╗   ██╗██████╗ ███████╗██████╗
+██╔════╝╚██╗ ██╔╝██╔══██╗██╔════╝██╔══██╗
+██║      ╚████╔╝ ██████╔╝█████╗  ██████╔╝
+██║       ╚██╔╝  ██╔══██╗██╔══╝  ██╔══██╗
+╚██████╗   ██║   ██████╔╝███████╗██║  ██║
+ ╚═════╝   ╚═╝   ╚═════╝ ╚══════╝╚═╝  ╚═╝
+██╗      ██████╗ ██████╗ ███████╗████████╗███████╗██████╗
+██║     ██╔═══██╗██╔══██╗██╔════╝╚══██╔══╝██╔════╝██╔══██╗
+██║     ██║   ██║██████╔╝███████╗   ██║   █████╗  ██████╔╝
+██║     ██║   ██║██╔══██╗╚════██║   ██║   ██╔══╝  ██╔══██╗
+███████╗╚██████╔╝██████╔╝███████║   ██║   ███████╗██║  ██║
+╚══════╝ ╚═════╝ ╚═════╝ ╚══════╝   ╚═╝   ╚══════╝╚═╝  ╚═╝
+
+ ✦ HUBT Network Guardian · 7x24 Zero Drop ✦
+╔════════════════════════════════════════════════════════════╗
+"""
+
+
+def _clear_screen() -> None:
+    """清屏（跨平台）。"""
+    import os as _os
+    _os.system("cls" if sys.platform == "win32" else "clear")
+
+
+def _check_online_status() -> tuple[bool, str]:
+    """检测网络状态，返回 (是否在线, 状态描述)。"""
+    try:
+        ok = check_connectivity(timeout=2.0)
+    except Exception:
+        ok = False
+    if ok:
+        return (True, "✅ 外网连通")
+    return (False, "❌ 外网断开")
+
+
+def _render_menu(cfg: GlobalConfig) -> tuple[object, bool]:
+    """打印主菜单（Logo + 状态 + 选项），返回 (current_account, is_online)。"""
+    online, status_text = _check_online_status()
+    current = cfg.get_current_account()
+    if current:
+        svc = SERVICE_NAMES.get(current.service, current.service)
+        acct_line = f"{current.user_id} ({svc})"
+    else:
+        acct_line = "（无 — 请先添加账号）"
+
+    print(LOGO)
+    print(f"  📡  {status_text}    👤  {acct_line}")
+    print()
+    print("  [1] 🚀 启动守护模式 (Watch)")
+    print("  [2] 🔄 切换网络账号")
+    print("  [3] ➕ 添加新的账号")
+    print("  [4] 🔌 执行安全下线")
+    print("  [5] 📖 查看帮助文档")
+    print("  [0] ❌ 退出终端")
+    print()
+    return current, online
+
+
+def show_menu(cfg: GlobalConfig) -> int:
+    """交互式主菜单。"""
+    while True:
+        _clear_screen()
+        current, online = _render_menu(cfg)
+
+        choice = input(f"  请输入选项 [1]: ").strip()
+
+        # ── 1. 启动守护模式 ──
+        if not choice or choice == "1":
+            if not current:
+                warn("没有可用账号，请先 [3] 添加新账号")
+                input("  按 Enter 返回菜单...")
+                continue
+
+            # 若已离线，根据 auto_auth 决定是否自动认证
+            if not online:
+                if cfg.auto_auth:
+                    info("检测到断网，正在尝试登录...")
+                    if not password_available(current):
+                        warn(f"账号 {current.user_id} 的密码不可用，请重新添加该账号")
+                        input("  按 Enter 返回菜单...")
+                        continue
+                    result = login_account(current, max_session_attempts=1, request_retries=2)
+                    if result.success:
+                        success("登录成功！进入守护模式")
+                        notify_win32("🦞 CampusNet Guard", "校园网已连通！")
+                    else:
+                        warn(f"登录失败: {error_text(result, 60)}")
+                        input("  按 Enter 返回菜单...")
+                        continue
+                else:
+                    warn("自动认证已关闭，跳过登录，直接进入守护模式（断网时将无法自动重连）")
+            else:
+                info("网络已连通，直接进入守护模式")
+
+            run_watch_loop(cfg)
+            # 监控模式返回后直接刷新菜单
+            continue
+
+        # ── 2. 切换账号（先下线旧号 → 切换配置 → 上线新号）──
+        elif choice == "2":
+            ids = cfg.account_ids()
+            if not ids:
+                warn("没有已保存的账号，请先 [3] 添加")
+                input("  按 Enter 返回菜单...")
+                continue
+
+            print()
+            print("  ── 已保存的账号 ──")
+            for i, uid in enumerate(ids, 1):
+                mark = " ← 当前" if uid == cfg.current_user_id else ""
+                print(f"    {i}. {uid}{mark}")
+            print("    0. 返回")
+            print()
+            try:
+                c = input(f"  选择账号 (1-{len(ids)}): ").strip()
+                if c == "0" or not c:
+                    continue
+                idx = int(c) - 1
+                if 0 <= idx < len(ids):
+                    new_id = ids[idx]
+
+                    # 如果新账号和当前账号不同，先下线旧号
+                    if new_id != cfg.current_user_id and current:
+                        info(f"正在注销旧账号: {current.user_id}...")
+                        r = logout_host(current.host)
+                        if r.success:
+                            success("旧账号已下线")
+                        else:
+                            warn(f"注销旧账号失败（继续切换）: {r.error}")
+
+                    # 切换配置
+                    cfg.current_user_id = new_id
+                    save_config(cfg)
+                    success(f"已切换到: {new_id}")
+
+                    # 询问是否立即上线
+                    do_login = input("  立即登录新账号？[Y/n]: ").strip().lower()
+                    if do_login in ("", "y", "yes"):
+                        new_account = cfg.get_current_account()
+                        if new_account:
+                            if not password_available(new_account):
+                                warn(f"账号 {new_account.user_id} 的密码不可用，请重新添加该账号")
+                                continue
+                            info(f"正在登录新账号: {new_account.user_id}...")
+                            result = login_account(new_account, max_session_attempts=1, request_retries=2)
+                            if result.success:
+                                success(f"新账号 {new_account.user_id} 上线成功 ✅")
+                                notify_win32("🦞 CampusNet Guard", f"已切换账号: {new_account.user_id}")
+                            else:
+                                warn(f"新账号上线失败: {error_text(result, 60)}")
+                else:
+                    warn("序号无效")
+            except (ValueError, IndexError):
+                warn("输入无效")
+            input("  按 Enter 返回菜单...")
+            continue
+
+        # ── 3. 添加新账号 ──
+        elif choice == "3":
+            account = run_setup_wizard()
+            if account:
+                try:
+                    cfg.upsert_account(account)
+                except Exception as exc:
+                    error(f"保存密码失败: {type(exc).__name__}: {exc}")
+                    input("  按 Enter 返回菜单...")
+                    continue
+                if not save_config(cfg):
+                    input("  按 Enter 返回菜单...")
+                    continue
+                success(f"账号已保存 → {config_path()}")
+                # 自动刷新当前用户
+                current = cfg.get_current_account()
+            input("  按 Enter 返回菜单...")
+            continue
+
+        # ── 4. 注销下线 ──
+        elif choice == "4":
+            if not current:
+                warn("没有账号可注销")
+                input("  按 Enter 返回菜单...")
+                continue
+
+            info(f"正在向 {current.host} 发送注销...")
+            r = logout_host(current.host)
+            if r.success:
+                success("已注销下线 ✅")
+                notify_win32("🦞 CampusNet Guard", "已成功注销下线")
+            else:
+                warn(f"注销失败: {r.error}")
+            input("  按 Enter 返回菜单...")
+            continue
+
+        # ── 5. 帮助文档 ──
+        elif choice == "5":
+            _clear_screen()
+            print_user_guide()
+            input("  按 Enter 返回菜单...")
+            continue
+
+        # ── 0. 退出 ──
+        elif choice == "0":
+            _clear_screen()
+            print()
+            print("  再见 👋  校园网一路畅通！")
+            print()
+            return 0
+
+        else:
+            print("  输入无效，请选择 0-5")
+            input("  按 Enter 返回菜单...")
+            continue
+
+
+def main() -> int:
+    cfg = load_config()
+    return show_menu(cfg)
+
+
+def entry_point() -> int:
+    """统一入口：有参数走 CLI，无参数走自动流。"""
+    if len(sys.argv) > 1:
+        from cyber_lobster.cli import main as cli_main
+        return cli_main()
+
+    return main()
+
+
+if __name__ == "__main__":
+    sys.exit(entry_point())

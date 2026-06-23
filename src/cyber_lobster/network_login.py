@@ -21,12 +21,12 @@ import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
+from cyber_lobster.constants import DEFAULT_HOST, DEFAULT_SERVICE
+
 logger = logging.getLogger("cyber-lobster.login")
 
 # ── 可调常量 ──────────────────────────────────────────────
 
-DEFAULT_HOST = "172.16.54.18"                     # 历史兼容示例值，不保证适用于所有校园网；公开文档应引导用户按实际认证页填写
-DEFAULT_SERVICE = "DX"                            # 运营商: DX / YD / LT / 校园网
 DEFAULT_TIMEOUT = 10                              # 单次请求超时（秒）
 DEFAULT_MAX_RETRIES = 3                           # 请求级重试次数
 DEFAULT_SESSION_RETRIES = 3                       # 会话级重试次数

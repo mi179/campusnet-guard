@@ -64,8 +64,8 @@ class TestCliMain(TestCase):
 
     def test_no_args_enters_menu_entry(self):
         cli = import_cli()
-        fake_exe_main = SimpleNamespace(main=lambda: 23)
-        with patch.dict(sys.modules, {"exe_main": fake_exe_main}):
+        fake_menu = SimpleNamespace(main=lambda: 23)
+        with patch.dict(sys.modules, {"cyber_lobster.menu": fake_menu}):
             with self.assertRaises(SystemExit) as raised:
                 cli.main([])
 

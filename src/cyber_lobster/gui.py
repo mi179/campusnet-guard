@@ -20,24 +20,22 @@ from cyber_lobster.config import (
     save as save_config,
     set_config_path,
 )
-from cyber_lobster.network import check_connectivity
-from cyber_lobster.network_login import (
-    DEFAULT_HOST,
-    PortalCredentials,
-    login_with_session_retry,
-    logout as eportal_logout,
-    parse_login_response,
+from cyber_lobster.auth_service import (
+    error_text,
+    login_account,
+    login_plain,
+    logout_host,
+    parse_response,
+    password_available,
 )
+from cyber_lobster.constants import DEFAULT_HOST, SERVICE_NAMES, SERVICE_VALUES
+from cyber_lobster.network import check_connectivity
 from cyber_lobster.startup import (
     StartupError,
     disable_startup,
     enable_startup,
     get_startup_status,
 )
-
-
-SERVICE_NAMES = {"DX": "电信", "YD": "移动", "LT": "联通", "校园网": "校园网"}
-SERVICE_VALUES = {"电信": "DX", "移动": "YD", "联通": "LT", "校园网": "校园网"}
 
 
 class CyberLobsterGUI(tk.Tk):
@@ -374,10 +372,16 @@ class CyberLobsterGUI(tk.Tk):
         def work() -> None:
             try:
                 self._put_log(f"正在验证账号 {account.user_id}...")
-                creds = PortalCredentials(user_id=account.user_id, password=account.password, service=account.service)
-                result = login_with_session_retry(creds, host=account.host, max_session_attempts=1, request_retries=2)
+                result = login_plain(
+                    account.user_id,
+                    account.password,
+                    account.service,
+                    account.host,
+                    max_session_attempts=1,
+                    request_retries=2,
+                )
                 if not result.success:
-                    self.events.put(("account_failed", (dialog, result.error or result.body[:100])))
+                    self.events.put(("account_failed", (dialog, error_text(result))))
                     return
                 self.cfg.upsert_account(account)
                 save_config(self.cfg)
@@ -401,7 +405,7 @@ class CyberLobsterGUI(tk.Tk):
             return
 
         account = self.cfg.get_current_account()
-        if not account or not account.password:
+        if not account or not password_available(account):
             self.notebook.select(1)
             self.deiconify()
             self.lift()
@@ -427,7 +431,7 @@ class CyberLobsterGUI(tk.Tk):
         if not account:
             messagebox.showinfo("没有账号", "请先添加账号。")
             return None
-        if not account.password:
+        if not password_available(account):
             messagebox.showerror("密码不可读取", "该账号密码不可读取，请重新添加账号。")
             return None
         return account
@@ -446,7 +450,7 @@ class CyberLobsterGUI(tk.Tk):
 
     def _verify_account(self, user_id: str) -> None:
         account = self.cfg.get_account(user_id)
-        if not account or not account.password:
+        if not account or not password_available(account):
             messagebox.showerror("账号不可用", "账号不存在或密码不可读取。")
             return
         self._run_login(account, label="验证")
@@ -458,7 +462,7 @@ class CyberLobsterGUI(tk.Tk):
 
         def work() -> None:
             self._put_log(f"正在注销账号 {account.user_id}...")
-            result = eportal_logout(host=account.host)
+            result = logout_host(account.host)
             self.events.put(("logout", result))
 
         threading.Thread(target=work, daemon=True).start()
@@ -472,13 +476,7 @@ class CyberLobsterGUI(tk.Tk):
         def work() -> None:
             try:
                 self._put_log(f"{label}账号 {account.user_id}...")
-                creds = PortalCredentials(
-                    user_id=account.user_id,
-                    password=account.password,
-                    service=account.service,
-                    query_string=account.query_string,
-                )
-                result = login_with_session_retry(creds, host=account.host, max_session_attempts=1, request_retries=2)
+                result = login_account(account, max_session_attempts=1, request_retries=2)
                 self.events.put(("login", (label, result)))
             finally:
                 self.worker_busy = False
@@ -511,7 +509,7 @@ class CyberLobsterGUI(tk.Tk):
     def _watch_loop(self) -> None:
         while not self.stop_event.is_set():
             account = self.cfg.get_current_account()
-            if not account or not account.password:
+            if not account or not password_available(account):
                 self.events.put(("watch_error", "账号不可用，请重新添加账号。"))
                 break
 
@@ -520,17 +518,11 @@ class CyberLobsterGUI(tk.Tk):
                 self.events.put(("watch_log", "网络正常。"))
             else:
                 self.events.put(("watch_log", "检测到断网，正在重连..."))
-                creds = PortalCredentials(
-                    user_id=account.user_id,
-                    password=account.password,
-                    service=account.service,
-                    query_string=account.query_string,
-                )
-                result = login_with_session_retry(creds, host=account.host, max_session_attempts=1, request_retries=2)
+                result = login_account(account, max_session_attempts=1, request_retries=2)
                 if result.success:
                     self.events.put(("watch_log", "重连成功。"))
                 else:
-                    self.events.put(("watch_log", f"重连失败: {result.error or result.body[:80]}"))
+                    self.events.put(("watch_log", f"重连失败: {error_text(result, 80)}"))
 
             wait = max(3, int(self.interval_var.get()))
             for _ in range(wait):
@@ -641,12 +633,12 @@ class CyberLobsterGUI(tk.Tk):
                 elif event == "login":
                     label, result = payload
                     if result.success:
-                        msg = parse_login_response(result.body)
+                        msg = parse_response(result.body)
                         self.status_var.set(f"状态: {label}成功")
                         self._log(f"{label}成功。{msg.get('message', '') if msg else ''}")
                     else:
                         self.status_var.set(f"状态: {label}失败")
-                        self._log(f"{label}失败: {result.error or result.body[:100]}")
+                        self._log(f"{label}失败: {error_text(result)}")
                 elif event == "logout":
                     result = payload
                     if result.success:

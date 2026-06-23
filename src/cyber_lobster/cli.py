@@ -21,6 +21,23 @@ from cyber_lobster.config import (
     GlobalConfig,
     AccountConfig,
 )
+from cyber_lobster.auth_service import (
+    error_text,
+    login_account,
+    login_plain,
+    logout_host,
+    parse_response,
+    password_available,
+    response_message,
+)
+from cyber_lobster.constants import (
+    CHECK_TIMEOUT,
+    DEFAULT_HOST,
+    DEFAULT_SERVICE,
+    SERVICE_NAMES,
+    VALID_SERVICES,
+    WATCH_INTERVAL,
+)
 from cyber_lobster.help_text import print_user_guide
 from cyber_lobster.system import (
     get_cpu_temp,
@@ -29,14 +46,6 @@ from cyber_lobster.system import (
     format_memory,
 )
 from cyber_lobster.network import check_gateways, check_connectivity
-
-# ── 常量 ──
-SERVICE_NAMES = {"DX": "电信", "YD": "移动", "LT": "联通", "校园网": "校园网"}
-VALID_SERVICES = {"DX", "YD", "LT", "校园网"}
-WATCH_INTERVAL = 10
-CHECK_TIMEOUT = 3.0
-DEFAULT_HOST = "172.16.54.18"  # 历史兼容示例值，不保证适用于所有校园网
-DEFAULT_SERVICE = "DX"
 
 
 # ═══════════════════════════════════════════════
@@ -155,7 +164,7 @@ def _prompt_choice(label: str, choices: set[str], default: str) -> str:
 
 
 def _password_required(account: AccountConfig) -> bool:
-    if account.password:
+    if password_available(account):
         return True
     error(f"账号 {account.user_id} 的密码不可用，请重新运行 campusnet setup 更新该账号")
     return False
@@ -163,36 +172,19 @@ def _password_required(account: AccountConfig) -> bool:
 
 def _login_account(account: AccountConfig, label: str = "登录") -> int:
     """执行一次账号登录/验证。"""
-    from cyber_lobster.network_login import (
-        PortalCredentials,
-        login_with_session_retry,
-        parse_login_response,
-    )
-
     if not _password_required(account):
         return 1
 
-    creds = PortalCredentials(
-        user_id=account.user_id,
-        password=account.password,
-        service=account.service,
-        query_string=account.query_string,
-    )
     info(f"{label} {account.host} - {account.user_id} ({SERVICE_NAMES.get(account.service, account.service)})")
-    result = login_with_session_retry(
-        creds,
-        host=account.host,
-        max_session_attempts=1,
-        request_retries=2,
-    )
+    result = login_account(account, max_session_attempts=1, request_retries=2)
     if result.success:
-        msg = parse_login_response(result.body)
+        msg = parse_response(result.body)
         success(f"{label}成功")
         if msg:
             print("  ", json.dumps(msg, ensure_ascii=False, indent=2)[:300])
         return 0
 
-    error(f"{label}失败: {result.error or result.body[:100]}")
+    error(f"{label}失败: {error_text(result)}")
     return 1
 
 
@@ -224,7 +216,7 @@ def _select_account_id(cfg: GlobalConfig, requested: str = "") -> str:
 
 def cmd_menu(args: argparse.Namespace) -> int:
     """打开交互主菜单。"""
-    from exe_main import main as menu_main
+    from cyber_lobster.menu import main as menu_main
     return menu_main()
 
 
@@ -267,12 +259,6 @@ def cmd_storage(args: argparse.Namespace) -> int:
 
 def cmd_setup(args: argparse.Namespace) -> int:
     """交互式配置向导。"""
-    from cyber_lobster.network_login import (
-        PortalCredentials,
-        login_with_session_retry,
-        parse_login_response,
-    )
-
     print()
     print("cyber-lobster 配置向导")
     print("═" * 40)
@@ -302,17 +288,13 @@ def cmd_setup(args: argparse.Namespace) -> int:
     info(f"确认: {svc_name}({service}) / {user_id}")
     info("正在验证登录...")
 
-    creds = PortalCredentials(user_id=user_id, password=password, service=service)
-    result = login_with_session_retry(creds, host=host, max_session_attempts=1, request_retries=2)
+    result = login_plain(user_id, password, service, host, max_session_attempts=1, request_retries=2)
 
     if not result.success:
-        err = result.error or result.body[:100]
-        error(f"登录失败: {err}")
+        error(f"登录失败: {error_text(result)}")
         return 1
 
-    resp = parse_login_response(result.body)
-    msg = resp.get("message", "") or resp.get("result", "")
-    success(f"登录成功: {msg[:80]}")
+    success(f"登录成功: {response_message(result.body)[:80]}")
 
     # 保存到配置
     cfg = load_config()
@@ -383,10 +365,8 @@ def cmd_switch(args: argparse.Namespace) -> int:
 
     old_account = cfg.get_current_account()
     if old_account and not getattr(args, "no_logout", False):
-        from cyber_lobster.network_login import logout as eportal_logout
-
         info(f"正在注销旧账号: {old_account.user_id}...")
-        result = eportal_logout(host=old_account.host)
+        result = logout_host(old_account.host)
         if result.success:
             success("旧账号已下线")
         else:
@@ -427,12 +407,10 @@ def cmd_verify(args: argparse.Namespace) -> int:
 
 def cmd_logout(args: argparse.Namespace) -> int:
     """发送注销请求。"""
-    from cyber_lobster.network_login import logout as eportal_logout, parse_login_response
-
     info(f"正在向 {args.host} 发送注销请求...")
-    result = eportal_logout(host=args.host)
+    result = logout_host(args.host)
     if result.success:
-        msg = parse_login_response(result.body)
+        msg = parse_response(result.body)
         success(f"注销成功: {msg.get('message', '') or msg.get('result', 'ok')}")
         return 0
     else:
@@ -455,16 +433,8 @@ def cmd_watch(args: argparse.Namespace) -> int:
     if not _password_required(account):
         return 1
 
-    from cyber_lobster.network_login import PortalCredentials, login_with_session_retry
-
     interval = args.interval
     timeout = args.timeout
-    creds = PortalCredentials(
-        user_id=account.user_id,
-        password=account.password,
-        service=account.service,
-        query_string=account.query_string,
-    )
 
     info(f"监控启动 - {account.user_id} ({SERVICE_NAMES.get(account.service, account.service)})")
     info(f"间隔: {interval}s  |  超时: {timeout}s  |  按 Ctrl+C 退出")
@@ -491,17 +461,13 @@ def cmd_watch(args: argparse.Namespace) -> int:
                 warn(f"断连 ({fail_count})，正在重连...")
 
                 try:
-                    result = login_with_session_retry(
-                        creds, host=account.host,
-                        max_session_attempts=1, request_retries=2,
-                    )
+                    result = login_account(account, max_session_attempts=1, request_retries=2)
                     if result.success:
                         success("重连成功")
                         notify_win32("cyber-lobster", "校园网已自动重新连通！")
                         fail_count = 0
                     else:
-                        err = (result.error or result.body[:60]).replace("\n", " ")
-                        warn(f"重连失败: {err}")
+                        warn(f"重连失败: {error_text(result, 60)}")
                 except Exception as exc:
                     warn(f"重连异常: {type(exc).__name__}: {exc}")
 
@@ -708,47 +674,36 @@ def cmd_login(args: argparse.Namespace) -> int:
             return 1
         if not _password_required(acct):
             return 1
-        from cyber_lobster.network_login import (
-            PortalCredentials,
-            login_with_session_retry,
-            parse_login_response,
-        )
-
-        creds = PortalCredentials(
-            user_id=acct.user_id, password=acct.password,
-            service=acct.service, query_string=acct.query_string,
-        )
+        account = acct
+        service = acct.service
+        user_id = acct.user_id
         host = acct.host
     elif args.user_id:
         password = getpass.getpass("  密码（输入时不显示）: ")
         while not password:
             password = getpass.getpass("  密码不能为空: ")
-        from cyber_lobster.network_login import (
-            PortalCredentials,
-            login_with_session_retry,
-            parse_login_response,
-        )
-
-        creds = PortalCredentials(
-            user_id=args.user_id, password=password,
-            service=args.service,
-        )
+        account = None
+        service = args.service
+        user_id = args.user_id
         host = args.host
     else:
         print("用法: cyber-lobster login <学号>")
         print("  或: cyber-lobster login --current")
         return 1
 
-    info(f"登录 {host} - {creds.user_id} ({SERVICE_NAMES.get(creds.service, creds.service)})")
-    result = login_with_session_retry(creds, host=host)
+    info(f"登录 {host} - {user_id} ({SERVICE_NAMES.get(service, service)})")
+    if account:
+        result = login_account(account, max_session_attempts=3, request_retries=3)
+    else:
+        result = login_plain(user_id, password, service, host, max_session_attempts=3, request_retries=3)
     if result.success:
-        msg = parse_login_response(result.body)
+        msg = parse_response(result.body)
         success("登录成功")
         if msg:
             print("  ", json.dumps(msg, ensure_ascii=False, indent=2)[:300])
         return 0
     else:
-        error(f"登录失败: {result.error or result.body[:100]}")
+        error(f"登录失败: {error_text(result)}")
         return 1
 
 
@@ -783,7 +738,7 @@ COMMANDS = {
 def main(argv: list[str] | None = None) -> NoReturn:
     argv = sys.argv[1:] if argv is None else argv
     if not argv:
-        from exe_main import main as menu_main
+        from cyber_lobster.menu import main as menu_main
         sys.exit(menu_main())
 
     parser = build_parser()
