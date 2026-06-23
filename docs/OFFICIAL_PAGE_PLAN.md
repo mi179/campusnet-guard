@@ -27,9 +27,9 @@ CampusNet Guard 官网已部署在 Cloudflare Pages：
 ### 首页
 
 - 产品名和一句话介绍。
-- Windows 下载按钮，指向 GitHub Releases latest。
+- Windows 下载按钮，优先指向国内快速下载。
 - Linux 使用入口，指向 GitHub 仓库。
-- 国内备用下载说明。
+- GitHub Releases 作为可信源和版本源。
 - 常见问题和免责声明。
 
 ### 暂不拆分多页面
@@ -40,9 +40,11 @@ CampusNet Guard 官网已部署在 Cloudflare Pages：
 
 | 渠道 | 说明 | 状态 |
 |------|------|------|
-| GitHub Releases | 源头，版本记录最完整 | 主渠道 |
-| Cloudflare Pages 官网 | 下载说明和备用链接入口 | 已启用 |
-| 移动云盘 | 国内备用下载 | 已启用 |
+| 蓝奏云 | 免登录，普通用户优先 | 快速下载 |
+| 中国移动云盘 | 国内网盘入口 | 快速下载 |
+| 天翼云盘 | 国内网盘入口 | 快速下载 |
+| GitHub Releases | 源头，版本记录最完整 | 可信源 |
+| Cloudflare Pages 官网 | 下载说明和入口汇总 | 已启用 |
 | Cloudflare R2 | 直链对象存储 | 暂缓 |
 | 个人博客 | 项目故事和教程入口 | 已启用 |
 

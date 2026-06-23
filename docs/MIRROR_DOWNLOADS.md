@@ -1,19 +1,37 @@
-# 国内备用下载
+# 国内快速下载
 
-## 主下载
+给不想研究 GitHub 的 Windows 用户用。下载文件名都是：
 
-👉 [GitHub Releases](https://github.com/mi179/campusnet-guard/releases/latest)
+```text
+campusnet-guard-windows.zip
+```
 
-文件名: `campusnet-guard-windows.zip`
+## 推荐顺序
 
-## 国内备用
+### 1. 蓝奏云（免登录，优先）
 
-- **移动云盘**: https://yun.139.com/shareweb/#/w/i/2v3EpAtY1wC24
-- **提取码**: xr4j
-- **文件名**: campusnet-guard-windows.zip
+- 链接：https://wwbha.lanzoue.com/b01d716nwf
+- 密码：`39vp`
 
-## 注意事项
+### 2. 中国移动云盘
 
-- 网盘链接可能失效，以 GitHub Releases 为可信源
-- 不要下载第三方改包
-- 后续会补 SHA256 校验
+- 链接：https://yun.139.com/shareweb/#/w/i/2w2KCnNR2MPzl
+- 提取码：`igtu`
+
+### 3. 天翼云盘
+
+- 链接：https://cloud.189.cn/web/share?code=zeUzei2eIZz2
+- 访问码：`7bn1`
+
+## 可信源
+
+GitHub Releases 仍然是版本源和可信源：
+
+https://github.com/mi179/campusnet-guard/releases/latest
+
+## 安全提醒
+
+- 不要下载第三方改包。
+- 不要从搜索结果里的陌生下载站下载 exe。
+- 网盘链接可能失效，以官网和 GitHub Releases 说明为准。
+- 后续发布会补充 SHA256 校验。

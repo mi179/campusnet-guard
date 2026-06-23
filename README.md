@@ -50,16 +50,19 @@ CampusNet Guard（校园网守护）是适配 Ruijie ePortal 的校园网自动�
 
 **Windows 普通用户**：下载 `campusnet-guard-windows.zip`，解压后双击 `1-点我启动-校园网守护.exe` 即可使用，不需要安装 Python。
 
+### 国内快速下载（普通用户优先）
 
-### 主渠道
+- [蓝奏云免登录下载](https://wwbha.lanzoue.com/b01d716nwf)（密码：`39vp`）
+- [中国移动云盘](https://yun.139.com/shareweb/#/w/i/2w2KCnNR2MPzl)（提取码：`igtu`）
+- [天翼云盘](https://cloud.189.cn/web/share?code=zeUzei2eIZz2)（访问码：`7bn1`）
+
+### GitHub Releases（可信源和版本源）
 
 👉 [GitHub Releases 下载页](https://github.com/mi179/campusnet-guard/releases/latest)
 
-### 国内备用下载
+更多下载说明见 [docs/MIRROR_DOWNLOADS.md](docs/MIRROR_DOWNLOADS.md) 或[官网](https://campusnet.journeymind.blog)。
 
-如果 GitHub 直连下载慢，见 [docs/MIRROR_DOWNLOADS.md](docs/MIRROR_DOWNLOADS.md) 或[官网](https://campusnet.journeymind.blog)。
-
-> ⚠️ **安全提醒**：请只从 GitHub Releases 或官方页面下载，不要使用来路不明的 exe 文件。
+> ⚠️ **安全提醒**：请只从官网、GitHub Releases 或这里列出的网盘入口下载，不要使用来路不明的 exe 文件。
 
 ---
 
@@ -257,30 +260,13 @@ WantedBy=default.target
 
 ### Q: GitHub 下载慢怎么办？
 
-GitHub 在国内访问可能较慢。以下是一些解决方案：
+普通 Windows 用户优先使用国内快速下载：
 
-**方法 1：使用可信的 GitHub 代理/镜像**
+- [蓝奏云免登录下载](https://wwbha.lanzoue.com/b01d716nwf)（密码：`39vp`）
+- [中国移动云盘](https://yun.139.com/shareweb/#/w/i/2w2KCnNR2MPzl)（提取码：`igtu`）
+- [天翼云盘](https://cloud.189.cn/web/share?code=zeUzei2eIZz2)（访问码：`7bn1`）
 
-> ⚠️ 只使用可信的代理服务，不要使用来路不明的下载链接。
-
-- 搜索 "GitHub 加速" 或 "GitHub 镜像"，选择可信的服务
-- 使用方式：将 `https://github.com/` 替换为代理地址
-
-**方法 2：使用 Git 克隆**
-
-```bash
-git clone https://github.com/mi179/campusnet-guard.git
-```
-
-**方法 3：让朋友帮忙**
-
-让能访问 GitHub 的同学帮忙下载，通过微信/U盘/局域网传给你。
-
-**方法 4：使用备用下载渠道**
-
-项目计划提供 Cloudflare Pages 托管的官方页面，提供备用下载入口。参见 [官方页面方案](#官方页面方案)。
-
-> ⚠️ **安全提醒**：不要从搜索引擎随便找的下载站下载 exe 文件，可能被篡改。只从 GitHub Releases 或官方页面下载。
+GitHub Releases 仍然是可信源和版本源。不要从搜索结果里的陌生下载站下载 exe 文件。
 
 ### Q: 换电脑后密码不可用？
 
@@ -349,11 +335,11 @@ campusnet doctor
 
 ---
 
-## 官网与备用下载
+## 官网与国内快速下载
 
 - 官网：<https://campusnet.journeymind.blog>
 - GitHub Releases：<https://github.com/mi179/campusnet-guard/releases/latest>
-- 国内备用下载：见 [docs/MIRROR_DOWNLOADS.md](docs/MIRROR_DOWNLOADS.md)
+- 国内快速下载：见 [docs/MIRROR_DOWNLOADS.md](docs/MIRROR_DOWNLOADS.md)
 
 > ⚠️ **安全提醒**：无论从哪个渠道下载，都请优先核对 GitHub Releases 或官网说明，避免来路不明的 exe 文件。
 
