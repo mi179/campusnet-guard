@@ -36,14 +36,18 @@ jobs:
 
     - name: Package zip
       run: |
-        Compress-Archive -Path dist\campusnet-guard-gui.exe, dist\campusnet-guard-cli.exe, docs\QUICK_START_WINDOWS.md -DestinationPath dist\campusnet-guard-windows.zip
+        New-Item -ItemType Directory -Force -Path dist\windows-package | Out-Null
+        Copy-Item docs\START_HERE_WINDOWS.txt dist\windows-package\0-先看我-使用说明.txt
+        Copy-Item dist\campusnet-guard-gui.exe dist\windows-package\1-点我启动-校园网守护.exe
+        Copy-Item docs\QUICK_START_WINDOWS.md dist\windows-package\2-快速使用指南.md
+        Copy-Item dist\campusnet-guard-cli.exe dist\windows-package\9-排障工具-不懂不用点.exe
+        Copy-Item docs\DISCLAIMER.md dist\windows-package\9-免责声明.md
+        Compress-Archive -Path dist\windows-package\* -DestinationPath dist\campusnet-guard-windows.zip
 
     - name: Create Release
       uses: softprops/action-gh-release@v2
       with:
         files: |
-          dist/campusnet-guard-gui.exe
-          dist/campusnet-guard-cli.exe
           dist/campusnet-guard-windows.zip
         generate_release_notes: true
       env:

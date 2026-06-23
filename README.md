@@ -48,7 +48,7 @@ CampusNet Guard（校园网守护）是适配 Ruijie ePortal 的校园网自动�
 
 ## ⬇️ 下载
 
-**Windows 普通用户**：下载 `campusnet-guard-windows.zip`，解压后双击 `campusnet-guard-gui.exe` 即可使用，不需要安装 Python。
+**Windows 普通用户**：下载 `campusnet-guard-windows.zip`，解压后双击 `1-点我启动-校园网守护.exe` 即可使用，不需要安装 Python。
 
 
 ### 主渠道
@@ -71,7 +71,7 @@ CampusNet Guard（校园网守护）是适配 Ruijie ePortal 的校园网自动�
 
 ### 第 2 步：双击运行
 
-双击 `campusnet-guard-gui.exe`。
+双击 `1-点我启动-校园网守护.exe`。
 
 > **首次运行提示**：当前版本暂未进行代码签名，因此 Windows SmartScreen 可能提示未知发布者。请只从官方 GitHub Releases 下载，并自行判断是否信任。点击 **"更多信息"** → **"仍要运行"** 即可。详见 [Windows 安全提示说明](#windows-安全提示)。
 
@@ -333,8 +333,8 @@ campusnet doctor
 | 文件 | 用途 |
 |------|------|
 | `campusnet-guard-windows.zip` | Windows 用户下载包 |
-| `campusnet-guard-gui.exe` | 图形界面版（推荐） |
-| `campusnet-guard-cli.exe` | 命令行版（排障用） |
+| `1-点我启动-校园网守护.exe` | 图形界面版（推荐） |
+| `9-排障工具-不懂不用点.exe` | 排障工具，普通用户不用打开 |
 
 - **不需要安装 Python** — EXE 已包含 Python 运行时
 - **不需要安装 PyInstaller** — 这是开发工具，普通用户不需要
