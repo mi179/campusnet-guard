@@ -71,6 +71,17 @@ class TestCliMain(TestCase):
 
         self.assertEqual(raised.exception.code, 23)
 
+    def test_no_args_does_not_import_legacy_exe_main(self):
+        cli = import_cli()
+        sys.modules.pop("exe_main", None)
+        fake_menu = SimpleNamespace(main=lambda: 0)
+
+        with patch.dict(sys.modules, {"cyber_lobster.menu": fake_menu}):
+            with self.assertRaises(SystemExit):
+                cli.main([])
+
+        self.assertNotIn("exe_main", sys.modules)
+
     def test_switch_with_login_logs_out_and_verifies_new_account(self):
         cli = import_cli()
         cfg = GlobalConfig(
@@ -100,6 +111,26 @@ class TestCliMain(TestCase):
         save.assert_called_once_with(cfg)
         logout.assert_called_once_with(host="portal")
         login.assert_called_once()
+
+    def test_switch_no_logout_skips_old_account_logout(self):
+        cli = import_cli()
+        cfg = GlobalConfig(
+            current_user_id="old",
+            accounts={
+                "old": {"password": "oldpw", "service": "DX", "host": "portal"},
+                "new": {"password": "newpw", "service": "LT", "host": "portal"},
+            },
+        )
+        args = SimpleNamespace(user_id="new", login=False, no_logout=True)
+
+        with patch.object(cli, "logout_host") as logout:
+            with patch.object(cli, "load_config", return_value=cfg):
+                with patch.object(cli, "save_config", return_value=True):
+                    code = cli.cmd_switch(args)
+
+        self.assertEqual(code, 0)
+        self.assertEqual(cfg.current_user_id, "new")
+        logout.assert_not_called()
 
     def test_doctor_without_accounts_guides_user_to_add(self):
         cli = import_cli()
@@ -198,6 +229,33 @@ class TestCliMain(TestCase):
         self.assertEqual(code, 0)
         login.assert_called_once()
 
+    def test_login_manual_prompts_password_and_calls_login_service(self):
+        cli = import_cli()
+        login_result = SimpleNamespace(success=True, body='{"result": "ok"}', error="")
+
+        with patch.object(cli.getpass, "getpass", return_value="hidden") as getpass:
+            with patch.object(cli, "login_plain", return_value=login_result) as login:
+                with patch.object(cli, "parse_response", return_value={"result": "ok"}):
+                    code = cli.cmd_login(
+                        SimpleNamespace(
+                            current=False,
+                            user_id="u1",
+                            service="LT",
+                            host="portal",
+                        )
+                    )
+
+        self.assertEqual(code, 0)
+        getpass.assert_called_once()
+        login.assert_called_once_with(
+            "u1",
+            "hidden",
+            "LT",
+            "portal",
+            max_session_attempts=3,
+            request_retries=3,
+        )
+
     def test_login_without_args_prints_usage_without_network_dependency(self):
         cli = import_cli()
         sys.modules.pop("cyber_lobster.network_login", None)
@@ -205,6 +263,20 @@ class TestCliMain(TestCase):
 
         self.assertEqual(code, 1)
         self.assertNotIn("cyber_lobster.network_login", sys.modules)
+
+    def test_verify_missing_password_does_not_attempt_network_login(self):
+        cli = import_cli()
+        cfg = GlobalConfig(
+            current_user_id="u1",
+            accounts={"u1": {"password": "", "service": "DX", "host": "portal"}},
+        )
+
+        with patch.object(cli, "load_config", return_value=cfg):
+            with patch.object(cli, "login_account") as login:
+                code = cli.cmd_verify(SimpleNamespace(user_id=""))
+
+        self.assertEqual(code, 1)
+        login.assert_not_called()
 
     def test_watch_without_accounts_returns_error(self):
         cli = import_cli()
