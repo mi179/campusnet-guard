@@ -82,3 +82,28 @@ class TestStartup(TestCase):
 
         self.assertIn("campusnet-guard-gui.exe", command)
         self.assertIn("--autostart", command)
+
+    def test_linux_enable_status_disable(self):
+        with TemporaryDirectory() as tmp:
+            with patch.object(startup.sys, "platform", "linux"):
+                with patch.dict(startup.os.environ, {"XDG_CONFIG_HOME": tmp}):
+                    status = startup.get_startup_status()
+                    self.assertTrue(status.supported)
+                    self.assertFalse(status.enabled)
+
+                    command = "/usr/bin/campusnet-gui --autostart"
+                    enabled = startup.enable_startup(command=command)
+                    self.assertTrue(enabled.enabled)
+                    self.assertEqual(enabled.command, command)
+
+                    desktop_file = Path(tmp) / "autostart" / startup.LINUX_AUTOSTART_FILENAME
+                    self.assertTrue(desktop_file.exists())
+                    self.assertIn(f"Exec={command}", desktop_file.read_text(encoding="utf-8"))
+
+                    status = startup.get_startup_status()
+                    self.assertTrue(status.enabled)
+                    self.assertEqual(status.command, command)
+
+                    disabled = startup.disable_startup()
+                    self.assertFalse(disabled.enabled)
+                    self.assertFalse(desktop_file.exists())

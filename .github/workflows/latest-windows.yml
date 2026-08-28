@@ -1,4 +1,4 @@
-name: CampusNet Guard Latest Windows Package
+name: CampusNet Guard Latest Packages
 
 on:
   push:
@@ -10,7 +10,7 @@ permissions:
   contents: write
 
 jobs:
-  build-latest-windows:
+  build-windows:
     runs-on: windows-latest
     env:
       PYTHONUTF8: "1"
@@ -19,8 +19,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -34,10 +32,10 @@ jobs:
           pip install pyinstaller
 
       - name: Build EXE
-        run: |
-          python build.py
+        run: python build.py
 
       - name: Package Windows zip
+        shell: pwsh
         run: |
           New-Item -ItemType Directory -Force -Path dist\windows-package | Out-Null
           Copy-Item docs\START_HERE_WINDOWS.txt dist\windows-package\0-先看我-使用说明.txt
@@ -47,13 +45,57 @@ jobs:
           Copy-Item docs\DISCLAIMER.md dist\windows-package\9-免责声明.md
           Compress-Archive -Path dist\windows-package\* -DestinationPath dist\campusnet-guard-windows.zip -Force
           $hash = (Get-FileHash -Algorithm SHA256 dist\campusnet-guard-windows.zip).Hash.ToLower()
-          "$hash  campusnet-guard-windows.zip" | Set-Content dist\campusnet-guard-windows.zip.sha256.txt -Encoding UTF8
+          "$hash  campusnet-guard-windows.zip" | Set-Content dist\campusnet-guard-windows.zip.sha256.txt -Encoding ascii
+
+      - name: Upload Windows artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: latest-windows
+          path: |
+            dist/campusnet-guard-windows.zip
+            dist/campusnet-guard-windows.zip.sha256.txt
+
+  build-linux:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build Debian package
+        run: bash scripts/linux/build_deb.sh
+
+      - name: Upload Linux artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: latest-linux
+          path: |
+            dist/campusnet-guard_all.deb
+            dist/campusnet-guard_all.deb.sha256
+
+  publish:
+    needs: [build-windows, build-linux]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download packages
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
 
       - name: Move latest tag
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git tag -f latest $env:GITHUB_SHA
+          git tag -f latest "$GITHUB_SHA"
           git push origin latest --force
 
       - name: Publish latest release
@@ -63,14 +105,17 @@ jobs:
           target_commitish: ${{ github.sha }}
           name: CampusNet Guard latest
           body: |
-            自动构建的最新 Windows 下载包。
+            自动构建的最新 Windows 与 Linux 安装包。
 
-            普通用户下载 `campusnet-guard-windows.zip`，解压后双击 `1-点我启动-校园网守护.exe`。
+            - Windows：下载 `campusnet-guard-windows.zip`，解压后双击图形界面程序。
+            - Debian / Ubuntu：下载 `campusnet-guard_all.deb` 后使用 APT 安装，或运行项目提供的一键安装脚本。
 
             `v*` 标签仍用于正式版本归档；`latest` 始终跟随 main 分支的最新可用构建。
           files: |
             dist/campusnet-guard-windows.zip
             dist/campusnet-guard-windows.zip.sha256.txt
+            dist/campusnet-guard_all.deb
+            dist/campusnet-guard_all.deb.sha256
           make_latest: true
           overwrite_files: true
         env:

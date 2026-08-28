@@ -1,6 +1,6 @@
 # Linux 使用说明
 
-CampusNet Guard（校园网守护）Linux 用户通过源码运行，不提供 Linux EXE。
+CampusNet Guard（校园网守护）为 Debian/Ubuntu 提供带图形界面的 DEB 包，也支持源码运行。
 
 > `campusnet` 是推荐的 CLI 命令。`cyber-lobster` 是旧版本兼容命令，仍然可用。
 
@@ -15,12 +15,34 @@ CampusNet Guard（校园网守护）Linux 用户通过源码运行，不提供 L
 ## 系统要求
 
 - Python 3.10+
-- pip
-- 终端（用于交互式输入密码）
+- DEB 安装会自动安装 requests 和 tkinter 依赖
+- 源码安装需要 pip
 
 ## 安装
 
-### 方式一：一键安装脚本
+### 方式一：DEB 安装（桌面用户推荐）
+
+```bash
+# 自动下载最新发布版并通过 APT 安装
+curl -fsSL https://raw.githubusercontent.com/mi179/campusnet-guard/main/scripts/linux/install_deb.sh | bash
+```
+
+也可以克隆源码后自行构建：
+
+```bash
+bash scripts/linux/build_deb.sh
+sudo apt install ./dist/campusnet-guard_*_all.deb
+```
+
+安装后从应用菜单搜索“校园网守护”，或运行：
+
+```bash
+campusnet-gui
+```
+
+图形界面提供账号管理、登录验证、断网守护、日志和开机自启动设置。
+
+### 方式二：一键源码安装脚本
 
 ```bash
 git clone https://github.com/mi179/campusnet-guard.git
@@ -28,7 +50,7 @@ cd campusnet-guard
 bash scripts/linux/install.sh
 ```
 
-### 方式二：手动安装
+### 方式三：手动源码安装
 
 ```bash
 # 1. 克隆仓库
@@ -234,8 +256,8 @@ Linux 下使用本地密钥保护密码，并设置配置文件权限为 600；�
 |------|---------|-------|
 | 密码存储 | DPAPI | local-key + HMAC |
 | 弹窗通知 | ✅ ctypes.MessageBoxW | ❌ 不支持 |
-| 开机自启 | ✅ HKCU Run | ⚠️ 需手动配置 systemd |
-| GUI | ✅ 内置 tkinter | ❌ 不提供 |
+| 开机自启 | ✅ HKCU Run | ✅ XDG 自动启动 |
+| GUI | ✅ 内置 tkinter | ✅ DEB 内置 tkinter GUI |
 | CLI | ✅ 完整支持 | ✅ 完整支持 |
 
 ## 常见问题

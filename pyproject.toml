@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "campusnet-guard"
-version = "0.1.3"
+version = "0.1.5"
 description = "适配 Ruijie ePortal 的校园网自动认证与断网重连工具"
 authors = [{ name = "mi179" }]
 license = { text = "MIT" }
@@ -37,6 +37,8 @@ Documentation = "https://github.com/mi179/campusnet-guard#readme"
 campusnet = "cyber_lobster.cli:main"
 campusnet-guard = "cyber_lobster.cli:main"
 cyber-lobster = "cyber_lobster.cli:main"
+campusnet-gui = "cyber_lobster.gui:main"
+campusnet-guard-gui = "cyber_lobster.gui:main"
 cyber-lobster-gui = "cyber_lobster.gui:main"
 
 [tool.setuptools]

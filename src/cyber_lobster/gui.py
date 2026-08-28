@@ -6,6 +6,7 @@ import queue
 import threading
 import time
 import tkinter as tk
+import tkinter.font as tkfont
 from tkinter import filedialog, messagebox, ttk
 from datetime import datetime
 import argparse
@@ -46,8 +47,7 @@ class CyberLobsterGUI(tk.Tk):
     def __init__(self, autostart: bool = False) -> None:
         super().__init__()
         self.title(f"CampusNet Guard {__version__}")
-        self.geometry("860x560")
-        self.minsize(780, 500)
+        self._configure_display()
 
         self.autostart_mode = autostart
         self.cfg = load_config()
@@ -82,6 +82,47 @@ class CyberLobsterGUI(tk.Tk):
 
     # ----- UI -----
 
+    def _configure_display(self) -> None:
+        """Fit the window and widget metrics to small or HiDPI desktops."""
+        screen_width = self.winfo_screenwidth()
+        screen_height = self.winfo_screenheight()
+        width = max(600, min(900, screen_width - 40))
+        height = max(440, min(620, screen_height - 90))
+        x = max(0, (screen_width - width) // 2)
+        y = max(20, (screen_height - height) // 2)
+        self.geometry(f"{width}x{height}+{x}+{y}")
+        self.minsize(min(680, width), min(440, height))
+
+        default_font = tkfont.nametofont("TkDefaultFont")
+        family = str(default_font.cget("family"))
+        default_size = abs(int(default_font.cget("size")))
+        self.title_font = tkfont.Font(
+            self,
+            family=family,
+            size=max(13, default_size + 3),
+            weight="bold",
+        )
+        self.bold_font = tkfont.Font(
+            self,
+            family=family,
+            size=max(10, default_size),
+            weight="bold",
+        )
+        self.section_font = tkfont.Font(
+            self,
+            family=family,
+            size=max(11, default_size + 1),
+            weight="bold",
+        )
+
+        style = ttk.Style(self)
+        if style.theme_use() in {"default", "classic"} and "clam" in style.theme_names():
+            style.theme_use("clam")
+        style.configure(
+            "Treeview",
+            rowheight=max(28, default_font.metrics("linespace") + 10),
+        )
+
     def _build_ui(self) -> None:
         self.columnconfigure(0, weight=1)
         self.rowconfigure(1, weight=1)
@@ -93,7 +134,7 @@ class CyberLobsterGUI(tk.Tk):
         ttk.Label(
             header,
             text="CampusNet Guard 校园网守护",
-            font=("Microsoft YaHei UI", 16, "bold"),
+            font=self.title_font,
         ).grid(row=0, column=0, sticky="w")
         ttk.Label(header, textvariable=self.status_var).grid(row=1, column=0, sticky="w", pady=(4, 0))
 
@@ -116,7 +157,7 @@ class CyberLobsterGUI(tk.Tk):
         top.columnconfigure(1, weight=1)
 
         ttk.Label(top, text="账号").grid(row=0, column=0, sticky="w")
-        ttk.Label(top, textvariable=self.current_account_var, font=("Microsoft YaHei UI", 10, "bold")).grid(
+        ttk.Label(top, textvariable=self.current_account_var, font=self.bold_font).grid(
             row=0,
             column=1,
             sticky="w",
@@ -244,10 +285,10 @@ class CyberLobsterGUI(tk.Tk):
             padx=18,
             pady=14,
             borderwidth=0,
-            font=("Microsoft YaHei UI", 10),
+            font=tkfont.nametofont("TkDefaultFont"),
         )
-        text.tag_configure("title", font=("Microsoft YaHei UI", 16, "bold"), spacing3=10)
-        text.tag_configure("section", font=("Microsoft YaHei UI", 12, "bold"), spacing1=10, spacing3=6)
+        text.tag_configure("title", font=self.title_font, spacing3=10)
+        text.tag_configure("section", font=self.section_font, spacing1=10, spacing3=6)
         self._insert_help(text)
         text.configure(state="disabled")
         text.grid(row=0, column=0, sticky="nsew")
@@ -273,8 +314,8 @@ class CyberLobsterGUI(tk.Tk):
             ("section", "账号为什么在高级页\n"),
             ("body", "大多数人只有一个校园网账号，不需要频繁切换。添加、切换、删除、测试登录都放在“高级”页，主页保持简单。\n\n"),
             ("section", "账号和密码保存在哪里\n"),
-            ("body", "账号配置默认保存在当前 Windows 用户的数据目录，不跟着 EXE 走。\n"),
-            ("body", "密码不会明文保存；Windows 下使用 DPAPI，只能由当前系统用户读取。\n"),
+            ("body", "账号配置默认保存在当前系统用户的数据目录，不跟着程序走。\n"),
+            ("body", "密码不会明文保存；Windows 使用 DPAPI，Linux 使用当前用户的本地密钥保护。\n"),
             ("body", "需要改保存位置时，打开“设置”页选择文件夹。普通用户一般不用改。\n\n"),
             ("section", "出问题先看这里\n"),
             ("body", "日志提示“外网未连通”：可以直接点“开始守护”。\n"),

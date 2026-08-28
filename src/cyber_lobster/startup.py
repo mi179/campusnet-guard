@@ -1,11 +1,9 @@
-"""Per-user startup management.
-
-Windows uses HKCU Run so enabling startup does not require administrator
-permissions and does not create a visible console window for the GUI build.
-"""
+"""Per-user startup management for Windows and Linux."""
 
 from __future__ import annotations
 
+import os
+import shlex
 import subprocess
 import sys
 from dataclasses import dataclass
@@ -14,6 +12,7 @@ from pathlib import Path
 
 APP_NAME = "CyberLobster"
 WINDOWS_RUN_KEY = r"Software\Microsoft\Windows\CurrentVersion\Run"
+LINUX_AUTOSTART_FILENAME = "campusnet-guard.desktop"
 
 
 class StartupError(RuntimeError):
@@ -44,16 +43,28 @@ def build_startup_command(mode: str = "gui") -> str:
         args = [sys.executable, "-m", module]
 
     args.append("--autostart" if mode == "gui" else "watch")
-    return subprocess.list2cmdline(args)
+    if sys.platform == "win32":
+        return subprocess.list2cmdline(args)
+    return shlex.join(args)
 
 
 def get_startup_status() -> StartupStatus:
+    if sys.platform.startswith("linux"):
+        path = _linux_autostart_path()
+        command = _get_linux_autostart_command(path)
+        return StartupStatus(
+            supported=True,
+            enabled=bool(command),
+            command=command,
+            location=str(path),
+        )
+
     if sys.platform != "win32":
         return StartupStatus(
             supported=False,
             enabled=False,
             location="",
-            reason="当前只支持在 Windows 图形界面中直接设置开机自启动。",
+            reason="当前系统暂不支持在程序内直接设置开机自启动。",
         )
 
     try:
@@ -70,10 +81,41 @@ def get_startup_status() -> StartupStatus:
 
 
 def enable_startup(command: str | None = None, mode: str = "gui") -> StartupStatus:
+    startup_command = command or build_startup_command(mode=mode)
+
+    if sys.platform.startswith("linux"):
+        path = _linux_autostart_path()
+        try:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(
+                "\n".join(
+                    [
+                        "[Desktop Entry]",
+                        "Type=Application",
+                        "Name=CampusNet Guard",
+                        "Name[zh_CN]=校园网守护",
+                        f"Exec={startup_command}",
+                        "Icon=campusnet-guard",
+                        "Terminal=false",
+                        "X-GNOME-Autostart-enabled=true",
+                        "",
+                    ]
+                ),
+                encoding="utf-8",
+            )
+            path.chmod(0o600)
+        except OSError as exc:
+            raise StartupError(f"开启开机自启动失败: {exc}") from exc
+        return StartupStatus(
+            supported=True,
+            enabled=True,
+            command=startup_command,
+            location=str(path),
+        )
+
     if sys.platform != "win32":
         raise StartupError("当前系统暂不支持在程序内直接开启开机自启动。")
 
-    startup_command = command or build_startup_command(mode=mode)
     try:
         _set_windows_run_value(startup_command)
     except OSError as exc:
@@ -88,6 +130,19 @@ def enable_startup(command: str | None = None, mode: str = "gui") -> StartupStat
 
 
 def disable_startup() -> StartupStatus:
+    if sys.platform.startswith("linux"):
+        path = _linux_autostart_path()
+        try:
+            path.unlink(missing_ok=True)
+        except OSError as exc:
+            raise StartupError(f"关闭开机自启动失败: {exc}") from exc
+        return StartupStatus(
+            supported=True,
+            enabled=False,
+            command="",
+            location=str(path),
+        )
+
     if sys.platform != "win32":
         raise StartupError("当前系统暂不支持在程序内直接关闭开机自启动。")
 
@@ -123,6 +178,33 @@ def _sibling_executable(current: Path, mode: str) -> Path:
     if sibling.exists():
         return sibling
     return current
+
+
+def _linux_autostart_path() -> Path:
+    config_home = os.environ.get("XDG_CONFIG_HOME")
+    base = Path(config_home).expanduser() if config_home else Path.home() / ".config"
+    return base / "autostart" / LINUX_AUTOSTART_FILENAME
+
+
+def _get_linux_autostart_command(path: Path) -> str:
+    try:
+        content = path.read_text(encoding="utf-8")
+    except FileNotFoundError:
+        return ""
+    except OSError as exc:
+        raise StartupError(f"读取开机自启动状态失败: {exc}") from exc
+
+    hidden = False
+    command = ""
+    for raw_line in content.splitlines():
+        key, separator, value = raw_line.partition("=")
+        if not separator:
+            continue
+        if key.strip().lower() == "hidden":
+            hidden = value.strip().lower() == "true"
+        elif key.strip().lower() == "exec":
+            command = value.strip()
+    return "" if hidden else command
 
 
 def _get_windows_run_value() -> str:

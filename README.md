@@ -143,14 +143,20 @@ UPX 是可执行文件压缩工具，可能触发安全软件误报。本项目�
 
 ## 🐧 Linux 使用
 
-Linux 用户通过源码运行，不提供 Linux EXE。适用于 NAS、软路由、小主机、实验室/办公室工位等场景。
+Linux 提供带桌面图形界面的 DEB 包，也保留完整 CLI。适用于桌面电脑、NAS、软路由、小主机、实验室/办公室工位等场景。
 
 ### 安装
 
 ```bash
-git clone https://github.com/mi179/campusnet-guard.git
-cd campusnet-guard
-bash scripts/linux/install.sh
+# Debian / Ubuntu：一键安装最新发布版
+curl -fsSL https://raw.githubusercontent.com/mi179/campusnet-guard/main/scripts/linux/install_deb.sh | bash
+```
+
+从源码构建本地 DEB：
+
+```bash
+bash scripts/linux/build_deb.sh
+sudo apt install ./dist/campusnet-guard_*_all.deb
 ```
 
 或手动安装：
@@ -164,6 +170,9 @@ pip install -e .
 ### 使用
 
 ```bash
+# 打开图形界面，也可以从应用菜单搜索“校园网守护”
+campusnet-gui
+
 # 添加账号（密码隐藏输入，自动加密保存）
 campusnet setup
 
@@ -223,7 +232,7 @@ WantedBy=default.target
 
 ## 🔧 CLI 命令（Linux / 排障）
 
-**Windows 普通用户推荐使用 GUI。** Linux 用户使用 CLI。
+Windows 和 Linux 桌面用户均可使用 GUI；以下 CLI 适合服务器和排障。
 
 | 命令 | 用途 |
 |------|------|

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <defs>
+    <linearGradient id="shield" x1="48" y1="32" x2="208" y2="224" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#2f80ed"/>
+      <stop offset="1" stop-color="#1254a3"/>
+    </linearGradient>
+  </defs>
+  <path fill="url(#shield)" d="M128 14 220 48v66c0 61-37 105-92 128-55-23-92-67-92-128V48z"/>
+  <path fill="none" stroke="#fff" stroke-linecap="round" stroke-width="14" d="M76 105c29-25 75-25 104 0M96 130c18-15 46-15 64 0"/>
+  <circle cx="128" cy="157" r="11" fill="#fff"/>
+  <path fill="#7ee2ff" d="m128 40 68 25v49c0 45-24 79-68 101-44-22-68-56-68-101V65zm0 15L74 75v39c0 36 18 64 54 84 36-20 54-48 54-84V75z" opacity=".8"/>
+</svg>
