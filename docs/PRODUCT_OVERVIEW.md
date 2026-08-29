@@ -18,7 +18,12 @@ CampusNet Guard（校园网守护）是适配 Ruijie ePortal 的校园网自动�
 
 - 目标：源码安装，用 `campusnet setup` 和 `campusnet start` 长期运行。
 - 这类用户可以接受 CLI、tmux/screen/systemd，但 CLI 必须稳定、安静、可诊断。
-- 不提供 Linux EXE，避免维护多个平台打包链路。
+- Debian / Ubuntu 桌面用户使用带 GUI 的 DEB；服务器环境保留 CLI。
+
+### macOS 用户
+
+- Apple Silicon 与 Intel 分别提供原生 DMG/ZIP 图形包。
+- 图形界面支持账号管理、断网守护和登录后自动运行。
 
 ### 维护者 / 高级用户
 
@@ -39,7 +44,7 @@ CampusNet Guard（校园网守护）是适配 Ruijie ePortal 的校园网自动�
 ## 产品原则
 
 - 用户说的是场景、感受和目标，不一定是准确技术方案。
-- 普通用户入口优先 GUI；CLI 面向 Linux、高级用户和排障。
+- 普通用户入口优先 GUI；CLI 面向服务器、高级用户和排障。
 - 报错要说明“发生了什么”和“下一步做什么”，不能只暴露异常名。
 - 不自动修改用户系统代理、VPN、TUN、路由、DNS 等全局设置。
 - 认证请求尽量直连校园网认证服务器，避免环境代理干扰。
@@ -50,6 +55,7 @@ CampusNet Guard（校园网守护）是适配 Ruijie ePortal 的校园网自动�
 - 密码不明文落盘。
 - Windows 使用 DPAPI 保护密码。
 - Linux 使用本地密钥保护密码，配置文件权限 600。
+- macOS 使用当前用户本地密钥保护密码，配置文件权限 600。
 - 不收集遥测、密码、cookie、token。
 - 不绕过认证、不破解、不共享账号、不突破在线数量限制。
 - 不建议在公共电脑保存账号。
@@ -62,9 +68,10 @@ CampusNet Guard（校园网守护）是适配 Ruijie ePortal 的校园网自动�
 - 开机自启动。
 - 配置位置与程序位置分离。
 - 密码保护和旧明文配置迁移。
-- Linux 源码安装脚本和 systemd 模板。
+- Linux DEB、一键安装脚本和 systemd 模板。
+- macOS Apple Silicon / Intel 原生 GUI 安装包。
 - Cloudflare Pages 官网：`https://campusnet.journeymind.blog`
-- GitHub Actions 云端构建 Windows 发布包。
+- GitHub Actions 云端构建 Windows、Linux 和 macOS 发布包。
 - 代理/VPN/TUN 兼容性诊断。
 
 ## 下一步路线
@@ -92,7 +99,7 @@ CampusNet Guard（校园网守护）是适配 Ruijie ePortal 的校园网自动�
 
 ## 暂不做
 
-- macOS 支持。
+- Apple Developer ID 签名与公证。
 - 自动更新。
 - 商业化。
 - 遥测收集。

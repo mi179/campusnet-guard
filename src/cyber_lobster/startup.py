@@ -1,8 +1,9 @@
-"""Per-user startup management for Windows and Linux."""
+"""Per-user startup management for Windows, Linux, and macOS."""
 
 from __future__ import annotations
 
 import os
+import plistlib
 import shlex
 import subprocess
 import sys
@@ -13,6 +14,7 @@ from pathlib import Path
 APP_NAME = "CyberLobster"
 WINDOWS_RUN_KEY = r"Software\Microsoft\Windows\CurrentVersion\Run"
 LINUX_AUTOSTART_FILENAME = "campusnet-guard.desktop"
+MACOS_LAUNCH_AGENT_LABEL = "blog.journeymind.campusnet-guard"
 
 
 class StartupError(RuntimeError):
@@ -52,6 +54,16 @@ def get_startup_status() -> StartupStatus:
     if sys.platform.startswith("linux"):
         path = _linux_autostart_path()
         command = _get_linux_autostart_command(path)
+        return StartupStatus(
+            supported=True,
+            enabled=bool(command),
+            command=command,
+            location=str(path),
+        )
+
+    if sys.platform == "darwin":
+        path = _macos_launch_agent_path()
+        command = _get_macos_startup_command(path)
         return StartupStatus(
             supported=True,
             enabled=bool(command),
@@ -113,6 +125,34 @@ def enable_startup(command: str | None = None, mode: str = "gui") -> StartupStat
             location=str(path),
         )
 
+    if sys.platform == "darwin":
+        path = _macos_launch_agent_path()
+        try:
+            arguments = shlex.split(startup_command)
+            if not arguments:
+                raise ValueError("启动命令为空")
+            path.parent.mkdir(parents=True, exist_ok=True)
+            with path.open("wb") as stream:
+                plistlib.dump(
+                    {
+                        "Label": MACOS_LAUNCH_AGENT_LABEL,
+                        "ProgramArguments": arguments,
+                        "RunAtLoad": True,
+                        "ProcessType": "Interactive",
+                    },
+                    stream,
+                    sort_keys=False,
+                )
+            path.chmod(0o600)
+        except (OSError, ValueError) as exc:
+            raise StartupError(f"开启开机自启动失败: {exc}") from exc
+        return StartupStatus(
+            supported=True,
+            enabled=True,
+            command=startup_command,
+            location=str(path),
+        )
+
     if sys.platform != "win32":
         raise StartupError("当前系统暂不支持在程序内直接开启开机自启动。")
 
@@ -132,6 +172,19 @@ def enable_startup(command: str | None = None, mode: str = "gui") -> StartupStat
 def disable_startup() -> StartupStatus:
     if sys.platform.startswith("linux"):
         path = _linux_autostart_path()
+        try:
+            path.unlink(missing_ok=True)
+        except OSError as exc:
+            raise StartupError(f"关闭开机自启动失败: {exc}") from exc
+        return StartupStatus(
+            supported=True,
+            enabled=False,
+            command="",
+            location=str(path),
+        )
+
+    if sys.platform == "darwin":
+        path = _macos_launch_agent_path()
         try:
             path.unlink(missing_ok=True)
         except OSError as exc:
@@ -205,6 +258,25 @@ def _get_linux_autostart_command(path: Path) -> str:
         elif key.strip().lower() == "exec":
             command = value.strip()
     return "" if hidden else command
+
+
+def _macos_launch_agent_path() -> Path:
+    return Path.home() / "Library" / "LaunchAgents" / f"{MACOS_LAUNCH_AGENT_LABEL}.plist"
+
+
+def _get_macos_startup_command(path: Path) -> str:
+    try:
+        with path.open("rb") as stream:
+            data = plistlib.load(stream)
+    except FileNotFoundError:
+        return ""
+    except (OSError, plistlib.InvalidFileException) as exc:
+        raise StartupError(f"读取开机自启动状态失败: {exc}") from exc
+
+    arguments = data.get("ProgramArguments", [])
+    if data.get("Disabled") or not isinstance(arguments, list):
+        return ""
+    return shlex.join(str(argument) for argument in arguments)
 
 
 def _get_windows_run_value() -> str:

@@ -8,7 +8,7 @@
 
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue)](https://python.org)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
-[![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux-lightgrey)]()
+[![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey)]()
 [![Official Site](https://img.shields.io/badge/Official-Site-blue)](https://campusnet.journeymind.blog)
 
 </div>
@@ -132,10 +132,12 @@ UPX 是可执行文件压缩工具，可能触发安全软件误报。本项目�
 - **密码不明文落盘**
   - Windows：使用 DPAPI 加密，绑定当前系统用户，换用户/换电脑后需重新输入
   - Linux：使用本地密钥保护密码，配置文件权限 600
+  - macOS：使用当前用户的本地密钥保护密码，配置文件权限 600
 - **配置文件权限**：`chmod 600`，仅当前用户可读写
 - **配置路径**：
   - Windows：`%APPDATA%\cyber-lobster\config.json`
   - Linux：`~/.config/cyber-lobster/config.json`
+  - macOS：`~/.config/cyber-lobster/config.json`
 - **配置与程序分离**：EXE 放在哪里都不影响配置文件位置
 - **不收集遥测**：不收集任何日志、密码、cookie、token
 
@@ -230,9 +232,22 @@ WantedBy=default.target
 
 ---
 
+## 🍎 macOS 使用
+
+GitHub Releases 同时提供 Apple Silicon 和 Intel 原生图形安装包：
+
+- M1/M2/M3/M4/M5：下载 `campusnet-guard-macos-apple-silicon.dmg`
+- Intel Mac：下载 `campusnet-guard-macos-intel.dmg`
+
+打开 DMG 后将 CampusNet Guard 拖入 Applications。首次打开若被 Gatekeeper 阻止，请在 Finder 中按住 Control 点击应用并选择“打开”。详细说明见 [macOS 使用说明](docs/QUICK_START_MACOS.md)。
+
+macOS 图形版包含账号管理、登录验证、断网守护和登录后自动运行，不需要另外安装 Python。
+
+---
+
 ## 🔧 CLI 命令（Linux / 排障）
 
-Windows 和 Linux 桌面用户均可使用 GUI；以下 CLI 适合服务器和排障。
+Windows、Linux 和 macOS 桌面用户均可使用 GUI；以下 CLI 适合服务器和排障。
 
 | 命令 | 用途 |
 |------|------|
@@ -303,6 +318,7 @@ campusnet doctor
 2. 删除配置文件：
    - Windows：`%APPDATA%\cyber-lobster\`
    - Linux：`~/.config/cyber-lobster/`
+   - macOS：`~/.config/cyber-lobster/`
 
 ---
 
@@ -328,13 +344,15 @@ campusnet doctor
 | 文件 | 用途 |
 |------|------|
 | `campusnet-guard-windows.zip` | Windows 用户下载包 |
+| `campusnet-guard_all.deb` | Debian / Ubuntu 图形安装包 |
+| `campusnet-guard-macos-apple-silicon.dmg` | Apple Silicon Mac 图形安装包 |
+| `campusnet-guard-macos-intel.dmg` | Intel Mac 图形安装包 |
 | `1-点我启动-校园网守护.exe` | 图形界面版（推荐） |
 | `9-排障工具-不懂不用点.exe` | 排障工具，普通用户不用打开 |
 
-- **不需要安装 Python** — EXE 已包含 Python 运行时
+- **Windows 与 macOS 不需要安装 Python** — 发布包已包含 Python 运行时
 - **不需要安装 PyInstaller** — 这是开发工具，普通用户不需要
-- **Linux 用户**：通过源码安装，参见上方 Linux 使用说明
-- **macOS**：暂未验证，不作为当前支持平台
+- **Linux 用户**：推荐安装 DEB，也支持源码安装
 
 ---
 

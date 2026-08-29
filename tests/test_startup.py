@@ -107,3 +107,26 @@ class TestStartup(TestCase):
                     disabled = startup.disable_startup()
                     self.assertFalse(disabled.enabled)
                     self.assertFalse(desktop_file.exists())
+
+    def test_macos_enable_status_disable(self):
+        with TemporaryDirectory() as tmp:
+            launch_agent = Path(tmp) / "Library" / "LaunchAgents" / "campusnet.plist"
+            with patch.object(startup.sys, "platform", "darwin"):
+                with patch.object(startup, "_macos_launch_agent_path", return_value=launch_agent):
+                    status = startup.get_startup_status()
+                    self.assertTrue(status.supported)
+                    self.assertFalse(status.enabled)
+
+                    command = "'/Applications/CampusNet Guard.app/Contents/MacOS/CampusNet Guard' --autostart"
+                    enabled = startup.enable_startup(command=command)
+                    self.assertTrue(enabled.enabled)
+                    self.assertTrue(launch_agent.exists())
+
+                    status = startup.get_startup_status()
+                    self.assertTrue(status.enabled)
+                    self.assertIn("CampusNet Guard.app", status.command)
+                    self.assertIn("--autostart", status.command)
+
+                    disabled = startup.disable_startup()
+                    self.assertFalse(disabled.enabled)
+                    self.assertFalse(launch_agent.exists())
