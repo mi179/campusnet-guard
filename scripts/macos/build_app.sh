@@ -42,6 +42,11 @@ APP_PATH="$ROOT_DIR/dist/CampusNet Guard.app"
 DMG_PATH="$ROOT_DIR/dist/campusnet-guard-macos-$ARCH_LABEL.dmg"
 ZIP_PATH="$ROOT_DIR/dist/campusnet-guard-macos-$ARCH_LABEL.zip"
 
+if command -v brew >/dev/null 2>&1 && brew --prefix cairo >/dev/null 2>&1; then
+    CAIRO_LIB_DIR=$(brew --prefix cairo)/lib
+    export DYLD_FALLBACK_LIBRARY_PATH="$CAIRO_LIB_DIR${DYLD_FALLBACK_LIBRARY_PATH:+:$DYLD_FALLBACK_LIBRARY_PATH}"
+fi
+
 rm -rf "$BUILD_DIR" "$APP_PATH"
 rm -f "$DMG_PATH" "$ZIP_PATH" "$DMG_PATH.sha256" "$ZIP_PATH.sha256"
 mkdir -p "$BUILD_DIR" "$ROOT_DIR/dist"
