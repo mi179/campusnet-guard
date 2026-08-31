@@ -134,4 +134,3 @@ route -n get <认证服务器IP> | grep interface
 4. 配置 Apple Developer ID 签名和公证。
 5. 增加 Windows、Linux、macOS GUI smoke test 与发布截图。
 6. 再考虑自动更新、CLI `--json` 和 GUI 首次使用向导。
-
