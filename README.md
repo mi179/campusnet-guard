@@ -28,6 +28,8 @@ CampusNet Guard（校园网守护）是适配 Ruijie ePortal 的校园网自动�
 | **campusnet-guard** | 兼容 CLI 别名 |
 | **cyber-lobster** | 旧版本兼容命令 / 内部 Python 包名 |
 
+维护者和后续开发请先阅读 [项目上下文](docs/PROJECT_CONTEXT.md)，其中记录了当前发布状态、构建入口、代理/TUN 兼容性边界和下一步优先级。
+
 ---
 
 ## 适用场景

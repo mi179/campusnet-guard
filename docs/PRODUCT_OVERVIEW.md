@@ -1,5 +1,7 @@
 # CampusNet Guard 产品与工程说明
 
+当前版本、发布物、构建链路和代理/TUN 技术上下文统一记录在 [PROJECT_CONTEXT.md](PROJECT_CONTEXT.md)。本文主要保留长期产品定位与路线。
+
 ## 产品定位
 
 CampusNet Guard（校园网守护）是适配 Ruijie ePortal 的校园网自动认证与断网重连工具。
