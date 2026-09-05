@@ -2,9 +2,9 @@
 
 # 🛡️ CampusNet Guard
 
-**校园网守护 · 适配 Ruijie ePortal 的校园网自动认证与断网重连工具**
+**English** | [简体中文](README.zh.md)
 
-*Ruijie ePortal campus network auto-login and reconnect tool*
+**Campus network auto-login and reconnect tool for Ruijie ePortal environments**
 
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue)](https://python.org)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
@@ -15,155 +15,155 @@
 
 ---
 
-## 一句话介绍
+## In one sentence
 
-CampusNet Guard（校园网守护）是适配 Ruijie ePortal 的校园网自动认证与断网重连工具，覆盖宿舍、教室、实验室、办公室、图书馆、机房、NAS、软路由、小主机等需要保持校园网在线的场景。
+CampusNet Guard is a campus-network auto-authentication and reconnect-on-dropout tool for Ruijie ePortal, covering dorms, classrooms, labs, offices, libraries, server rooms, NAS boxes, software routers, and mini PCs — anywhere you need to stay online on the campus network.
 
-## 项目名与命令名
+## Product name and command names
 
-| 名称 | 说明 |
+| Name | Notes |
 |------|------|
-| **CampusNet Guard** | 公开产品名和 Release 下载文件名 |
-| **campusnet** | 推荐 CLI 命令 |
-| **campusnet-guard** | 兼容 CLI 别名 |
-| **cyber-lobster** | 旧版本兼容命令 / 内部 Python 包名 |
+| **CampusNet Guard** | Public product name and release download file names |
+| **campusnet** | Recommended CLI command |
+| **campusnet-guard** | Compatible CLI alias |
+| **cyber-lobster** | Legacy-compatible command / internal Python package name |
 
-维护者和后续开发请先阅读 [项目上下文](docs/PROJECT_CONTEXT.md)，其中记录了当前发布状态、构建入口、代理/TUN 兼容性边界和下一步优先级。
+Maintainers and future development should first read the [project context](docs/PROJECT_CONTEXT.md), which records the current release status, build entry points, proxy/TUN compatibility boundaries, and next priorities.
 
 ---
 
-## 适用场景
+## Use cases
 
-| 场景 | 说明 |
+| Scenario | Notes |
 |------|------|
-| 宿舍电脑 | 个人笔记本、台式机，断网自动重连 |
-| 教室/实验室 | 工位机、教学设备，保持在线 |
-| 办公室 | 办公电脑，避免频繁认证 |
-| 图书馆 | 公共区域设备（不建议保存账号） |
-| 机房 | 批量设备，长期在线 |
-| NAS | 群晖/威联通等，7x24 在线 |
-| 软路由 | OpenWrt/爱快等，网关级守护 |
-| 小主机 | 树莓派、工控机、迷你主机 |
-| 个人电脑 | 任何需要保持校园网在线的设备 |
+| Dorm computers | Personal laptops and desktops, auto-reconnect on dropout |
+| Classrooms / labs | Workstation and teaching machines, stay online |
+| Offices | Office computers, avoid repeated authentication |
+| Libraries | Shared-area devices (saving credentials not recommended) |
+| Server rooms | Many devices, long-term online |
+| NAS | Synology / QNAP etc., 24/7 online |
+| Software routers | OpenWrt / iKuai etc., gateway-level guarding |
+| Mini PCs | Raspberry Pi, industrial PCs, mini hosts |
+| Personal computers | Any device that needs to stay online on the campus network |
 
 ---
 
-## ⬇️ 下载
+## ⬇️ Downloads
 
-**Windows 普通用户**：下载 `campusnet-guard-windows.zip`，解压后双击 `1-点我启动-校园网守护.exe` 即可使用，不需要安装 Python。
+**Regular Windows users**: download `campusnet-guard-windows.zip`, unzip, and double-click `1-点我启动-校园网守护.exe`. No Python installation required.
 
-### 国内快速下载（普通用户优先）
+### Fast downloads in mainland China (preferred for regular users)
 
-- [蓝奏云免登录下载](https://wwbha.lanzoue.com/b01d716nwf)（密码：`39vp`）
-- [中国移动云盘](https://yun.139.com/shareweb/#/w/i/2w2KCnNR2MPzl)（提取码：`igtu`）
-- [天翼云盘](https://cloud.189.cn/web/share?code=zeUzei2eIZz2)（访问码：`7bn1`）
+- [Lanzou cloud, no login required](https://wwbha.lanzoue.com/b01d716nwf) (password: `39vp`)
+- [China Mobile Cloud Drive](https://yun.139.com/shareweb/#/w/i/2w2KCnNR2MPzl) (code: `igtu`)
+- [China Telecom Cloud Drive](https://cloud.189.cn/web/share?code=zeUzei2eIZz2) (code: `7bn1`)
 
-### GitHub Releases（可信源和版本源）
+### GitHub Releases (trusted source and version source)
 
-👉 [GitHub Releases 下载页](https://github.com/mi179/campusnet-guard/releases/latest)
+👉 [GitHub Releases download page](https://github.com/mi179/campusnet-guard/releases/latest)
 
-更多下载说明见 [docs/MIRROR_DOWNLOADS.md](docs/MIRROR_DOWNLOADS.md) 或[官网](https://campusnet.journeymind.blog)。
+More download notes: [docs/MIRROR_DOWNLOADS.md](docs/MIRROR_DOWNLOADS.md) or the [official site](https://campusnet.journeymind.blog).
 
-> ⚠️ **安全提醒**：请只从官网、GitHub Releases 或这里列出的网盘入口下载，不要使用来路不明的 exe 文件。
-
----
-
-## 🚀 快速开始（Windows）
-
-### 第 1 步：下载并解压
-
-从 [Releases 页面](https://github.com/mi179/campusnet-guard/releases/latest) 下载 `campusnet-guard-windows.zip`，解压到任意文件夹。
-
-### 第 2 步：双击运行
-
-双击 `1-点我启动-校园网守护.exe`。
-
-> **首次运行提示**：当前版本暂未进行代码签名，因此 Windows SmartScreen 可能提示未知发布者。请只从官方 GitHub Releases 下载，并自行判断是否信任。点击 **"更多信息"** → **"仍要运行"** 即可。详见 [Windows 安全提示说明](#windows-安全提示)。
-
-### 第 3 步：添加账号
-
-打开 GUI 的 **高级** 页，点击 **添加账号**：
-
-1. 选择运营商（电信/移动/联通/校园网）
-2. 输入学号
-3. 输入密码（输入时不会显示）
-4. 确认认证服务器地址（不同学校可能不同）
-5. 点击 **保存并验证**
-
-验证成功后账号自动保存。密码不会明文保存，由 Windows DPAPI 加密保护。
-
-### 第 4 步：开启守护
-
-回到 **主页**，点击 **开始守护**。程序会每 10 秒检测一次网络，断网时自动重新认证。
-
-### 第 5 步（可选）：开机自启动
-
-打开 **设置** 页，勾选 **开机后自动运行并守护校园网**。以后电脑开机后会自动启动并进入守护模式。
+> ⚠️ **Security note**: download only from the official site, GitHub Releases, or the cloud links listed here. Never run exe files of unknown origin.
 
 ---
 
-## 🖥️ GUI 页面说明
+## 🚀 Quick start (Windows)
 
-| 页面 | 功能 |
+### Step 1: Download and unzip
+
+Download `campusnet-guard-windows.zip` from the [Releases page](https://github.com/mi179/campusnet-guard/releases/latest) and unzip it anywhere.
+
+### Step 2: Double-click to run
+
+Double-click `1-点我启动-校园网守护.exe`.
+
+> **First-run notice**: the current build is not code-signed, so Windows SmartScreen may warn about an unknown publisher. Download only from official GitHub Releases and decide for yourself whether to trust it. Click **"More info"** → **"Run anyway"**. See [Windows security notices](#windows-security-notices).
+
+### Step 3: Add an account
+
+Open the GUI's **Advanced** page and click **Add account**:
+
+1. Choose the carrier (China Telecom / Mobile / Unicom / campus network)
+2. Enter your student ID
+3. Enter your password (masked while typing)
+4. Confirm the authentication server address (it differs between schools)
+5. Click **Save and verify**
+
+Once verification succeeds the account is saved automatically. The password is never stored in plaintext — it is protected by Windows DPAPI encryption.
+
+### Step 4: Start guarding
+
+Back on the **Home** page, click **Start guarding**. The program checks the network every 10 seconds and re-authenticates automatically when the connection drops.
+
+### Step 5 (optional): Start on boot
+
+Open the **Settings** page and check **Run automatically after boot and guard the campus network**. From then on it starts and enters guard mode at login.
+
+---
+
+## 🖥️ GUI pages
+
+| Page | Function |
 |------|------|
-| **主页** | 开始守护、停止守护、注销下线、检测网络、实时日志 |
-| **高级** | 添加账号、多账号切换、测试登录、删除账号 |
-| **设置** | 检测间隔、开机自动守护、配置保存位置 |
-| **帮助** | 内置使用说明 |
+| **Home** | Start guarding, stop guarding, log out / go offline, test network, live log |
+| **Advanced** | Add accounts, switch between accounts, test login, delete accounts |
+| **Settings** | Check interval, guard on boot, config save location |
+| **Help** | Built-in usage instructions |
 
 ---
 
-## Windows 安全提示
+## Windows security notices
 
-### "未知发布者" / SmartScreen 拦截
+### "Unknown publisher" / SmartScreen blocking
 
-当前版本暂未进行代码签名，因此 Windows SmartScreen 可能提示未知发布者。请只从官方 GitHub Releases 下载，并自行判断是否信任。
+The current build is not code-signed, so Windows SmartScreen may warn about an unknown publisher. Download only from official GitHub Releases and decide for yourself whether to trust it.
 
-处理方式：
-1. 弹出蓝色窗口 → 点击 **"更多信息"** → **"仍要运行"**
-2. 弹出黄色窗口 → 点击 **"更多信息"** → **"仍要运行"**
+How to proceed:
+1. Blue dialog → click **"More info"** → **"Run anyway"**
+2. Yellow dialog → click **"More info"** → **"Run anyway"**
 
-### 为什么不使用 UPX 压缩
+### Why UPX compression is not used
 
-UPX 是可执行文件压缩工具，可能触发安全软件误报。本项目不使用 UPX，文件较大（约 15 MB），但兼容性更好。
-
----
-
-## 🔒 账号与密码安全
-
-- **密码不明文落盘**
-  - Windows：使用 DPAPI 加密，绑定当前系统用户，换用户/换电脑后需重新输入
-  - Linux：使用本地密钥保护密码，配置文件权限 600
-  - macOS：使用当前用户的本地密钥保护密码，配置文件权限 600
-- **配置文件权限**：`chmod 600`，仅当前用户可读写
-- **配置路径**：
-  - Windows：`%APPDATA%\cyber-lobster\config.json`
-  - Linux：`~/.config/cyber-lobster/config.json`
-  - macOS：`~/.config/cyber-lobster/config.json`
-- **配置与程序分离**：EXE 放在哪里都不影响配置文件位置
-- **不收集遥测**：不收集任何日志、密码、cookie、token
+UPX is an executable compression tool that can trigger false positives in security software. This project does not use UPX, so files are larger (~15 MB) but compatibility is better.
 
 ---
 
-## 🐧 Linux 使用
+## 🔒 Account and password security
 
-Linux 提供带桌面图形界面的 DEB 包，也保留完整 CLI。适用于桌面电脑、NAS、软路由、小主机、实验室/办公室工位等场景。
+- **Passwords are never written to disk in plaintext**
+  - Windows: encrypted with DPAPI, bound to the current system user — re-entry required after switching user or machine
+  - Linux: passwords protected by a local key, config file permission 600
+  - macOS: passwords protected by the current user's local key, config file permission 600
+- **Config file permissions**: `chmod 600`, readable and writable by the current user only
+- **Config paths**:
+  - Windows: `%APPDATA%\cyber-lobster\config.json`
+  - Linux: `~/.config/cyber-lobster/config.json`
+  - macOS: `~/.config/cyber-lobster/config.json`
+- **Config is separate from the program**: wherever the EXE lives does not affect the config location
+- **No telemetry**: no logs, passwords, cookies, or tokens are collected
 
-### 安装
+---
+
+## 🐧 Linux usage
+
+Linux ships a DEB package with a desktop GUI, and the full CLI is retained. Suitable for desktop machines, NAS, software routers, mini PCs, and lab/office workstations.
+
+### Install
 
 ```bash
-# Debian / Ubuntu：一键安装最新发布版
+# Debian / Ubuntu: one-line install of the latest release
 curl -fsSL https://raw.githubusercontent.com/mi179/campusnet-guard/main/scripts/linux/install_deb.sh | bash
 ```
 
-从源码构建本地 DEB：
+Build a local DEB from source:
 
 ```bash
 bash scripts/linux/build_deb.sh
 sudo apt install ./dist/campusnet-guard_*_all.deb
 ```
 
-或手动安装：
+Or install manually:
 
 ```bash
 python3 -m venv .venv
@@ -171,51 +171,51 @@ source .venv/bin/activate
 pip install -e .
 ```
 
-### 使用
+### Usage
 
 ```bash
-# 打开图形界面，也可以从应用菜单搜索“校园网守护”
+# Open the GUI; you can also search "校园网守护" in the app menu
 campusnet-gui
 
-# 添加账号（密码隐藏输入，自动加密保存）
+# Add an account (password entered masked, saved encrypted)
 campusnet setup
 
-# 启动断网自动重连
+# Start auto-reconnect on dropout
 campusnet start
 
-# 诊断配置和网络状态
+# Diagnose config and network status
 campusnet doctor
 
-# 查看已保存账号
+# List saved accounts
 campusnet list
 ```
 
-> `cyber-lobster` 是旧版本兼容命令，仍然可用。`campusnet` 是 CampusNet Guard 的轻量 CLI 推荐入口。
+> `cyber-lobster` is the legacy-compatible command and still works. `campusnet` is the recommended lightweight CLI entry for CampusNet Guard.
 
-### 后台运行
+### Running in the background
 
 ```bash
-# tmux 后台运行
+# Run in tmux
 tmux new -s campusnet
 campusnet start
-# Ctrl+B D 退出 tmux，程序继续运行
-# tmux attach -t campusnet 重新连接
+# Ctrl+B D detaches; the program keeps running
+# tmux attach -t campusnet to reconnect
 
-# screen 后台运行
+# Run in screen
 screen -S campusnet
 campusnet start
-# Ctrl+A D 退出 screen
-# screen -r campusnet 重新连接
+# Ctrl+A D detaches
+# screen -r campusnet to reconnect
 ```
 
-### systemd user service（高级配置）
+### systemd user service (advanced)
 
-仓库提供 systemd user service 模板，但不会自动启用。高级用户可手动配置：
+The repository provides a systemd user service template but does not enable it automatically. Advanced users can configure it by hand:
 
 ```ini
 # ~/.config/systemd/user/campusnet-guard.service
 [Unit]
-Description=CampusNet Guard 校园网自动认证守护
+Description=CampusNet Guard campus network auto-authentication daemon
 After=network-online.target
 
 [Service]
@@ -228,133 +228,133 @@ RestartSec=30
 WantedBy=default.target
 ```
 
-### 详细说明
+### More detail
 
-参见 [docs/LINUX_USAGE.md](docs/LINUX_USAGE.md)。
-
----
-
-## 🍎 macOS 使用
-
-GitHub Releases 同时提供 Apple Silicon 和 Intel 原生图形安装包：
-
-- M1/M2/M3/M4/M5：下载 `campusnet-guard-macos-apple-silicon.dmg`
-- Intel Mac：下载 `campusnet-guard-macos-intel.dmg`
-
-打开 DMG 后将 CampusNet Guard 拖入 Applications。首次打开若被 Gatekeeper 阻止，请在 Finder 中按住 Control 点击应用并选择“打开”。详细说明见 [macOS 使用说明](docs/QUICK_START_MACOS.md)。
-
-macOS 图形版包含账号管理、登录验证、断网守护和登录后自动运行，不需要另外安装 Python。
+See [docs/LINUX_USAGE.md](docs/LINUX_USAGE.md).
 
 ---
 
-## 🔧 CLI 命令（Linux / 排障）
+## 🍎 macOS usage
 
-Windows、Linux 和 macOS 桌面用户均可使用 GUI；以下 CLI 适合服务器和排障。
+GitHub Releases provide native GUI installers for both Apple Silicon and Intel:
 
-| 命令 | 用途 |
+- M1/M2/M3/M4/M5: download `campusnet-guard-macos-apple-silicon.dmg`
+- Intel Macs: download `campusnet-guard-macos-intel.dmg`
+
+Open the DMG and drag CampusNet Guard into Applications. If Gatekeeper blocks the first launch, Control-click the app in Finder and choose "Open". Details: [macOS usage guide](docs/QUICK_START_MACOS.md).
+
+The macOS GUI includes account management, login verification, dropout guarding, and run-at-login — no separate Python installation needed.
+
+---
+
+## 🔧 CLI commands (Linux / troubleshooting)
+
+Desktop users on Windows, Linux, and macOS all have the GUI; the CLI below suits servers and troubleshooting.
+
+| Command | Purpose |
 |------|------|
-| `campusnet setup` | 添加账号（`add` 是别名） |
-| `campusnet start` | 启动守护 |
-| `campusnet list` | 查看账号 |
-| `campusnet verify` | 验证登录（`test` 是别名） |
-| `campusnet doctor` | 诊断 |
-| `campusnet logout` | 注销下线 |
-| `campusnet autostart enable` | 开启开机自启 |
+| `campusnet setup` | Add an account (`add` is an alias) |
+| `campusnet start` | Start guarding |
+| `campusnet list` | List accounts |
+| `campusnet verify` | Verify login (`test` is an alias) |
+| `campusnet doctor` | Diagnostics |
+| `campusnet logout` | Log out / go offline |
+| `campusnet autostart enable` | Enable run-at-login |
 
-> `cyber-lobster` 是旧版本兼容命令，仍然可用。`campusnet` 是推荐入口。
+> `cyber-lobster` is the legacy-compatible command and still works. `campusnet` is the recommended entry.
 
-完整命令列表：`campusnet --help`
+Full command list: `campusnet --help`
 
 ---
 
-## ❓ 常见问题
+## ❓ FAQ
 
-### Q: 登录失败怎么办？
+### Q: Login fails — what now?
 
-1. **运营商选错** — 电信选 DX，移动选 YD，联通 LT；校内直连选"校园网"
-2. **账号或密码错误** — 确认学号和密码正确
-3. **认证服务器地址不对** — 不同学校的认证服务器地址可能不同，示例 `172.16.54.18`，联系学校网络中心确认
-4. **queryString 过期** — 重新添加账号，或从浏览器登录页复制
+1. **Wrong carrier** — China Telecom is DX, Mobile is YD, Unicom is LT; on-campus direct connection is "campus network"
+2. **Wrong account or password** — confirm your student ID and password
+3. **Wrong authentication server address** — it differs between schools; example `172.16.54.18`. Ask your school's network center to confirm
+4. **Expired queryString** — re-add the account, or copy it from the browser login page
 
-### Q: 教室/图书馆不弹认证页？
+### Q: No authentication page pops up in classrooms / the library?
 
-不同区域的认证服务器可能不同。尝试在添加账号时修改认证服务器地址。部分教室/网络环境不弹认证页，可能是学校网络策略限制。
+Different areas may use different authentication servers. Try changing the authentication server address when adding the account. Some classrooms/network environments never show an authentication page — that may be a school network policy restriction.
 
-### Q: 在线设备数量限制？
+### Q: Concurrent device limits?
 
-学校网络系统可能限制同时在线设备数量。如果超出限制，其他设备会被踢下线。这取决于学校策略，本工具无法改变。
+The school's network system may limit how many devices can be online at once. Over the limit, other devices get kicked offline. That depends on school policy and this tool cannot change it.
 
-### Q: GitHub 下载慢怎么办？
+### Q: GitHub downloads are slow?
 
-普通 Windows 用户优先使用国内快速下载：
+Regular Windows users should prefer the fast mainland-China mirrors:
 
-- [蓝奏云免登录下载](https://wwbha.lanzoue.com/b01d716nwf)（密码：`39vp`）
-- [中国移动云盘](https://yun.139.com/shareweb/#/w/i/2w2KCnNR2MPzl)（提取码：`igtu`）
-- [天翼云盘](https://cloud.189.cn/web/share?code=zeUzei2eIZz2)（访问码：`7bn1`）
+- [Lanzou cloud, no login required](https://wwbha.lanzoue.com/b01d716nwf) (password: `39vp`)
+- [China Mobile Cloud Drive](https://yun.139.com/shareweb/#/w/i/2w2KCnNR2MPzl) (code: `igtu`)
+- [China Telecom Cloud Drive](https://cloud.189.cn/web/share?code=zeUzei2eIZz2) (code: `7bn1`)
 
-GitHub Releases 仍然是可信源和版本源。不要从搜索结果里的陌生下载站下载 exe 文件。
+GitHub Releases remains the trusted source and version source. Never download exe files from random download sites in search results.
 
-### Q: 换电脑后密码不可用？
+### Q: Password stops working after switching machines?
 
-Windows DPAPI 加密的密码绑定当前系统用户，换电脑/换用户后需要重新运行 `campusnet setup` 输入密码。
+Passwords encrypted with Windows DPAPI are bound to the current system user. After changing machine or user, run `campusnet setup` again to enter the password.
 
-### Q: 开了系统代理、VPN 或 TUN 模式，需要先关掉吗？
+### Q: I have a system proxy, VPN, or TUN mode on — do I need to turn it off first?
 
-通常不用先手动关闭。CampusNet Guard 会尽量让校园网认证请求直连认证服务器，不走环境代理。
+Usually not. CampusNet Guard tries to send campus authentication requests directly to the authentication server instead of through the environment proxy.
 
-如果登录失败，先运行：
+If login fails, first run:
 
 ```bash
 campusnet doctor
 ```
 
-看输出里的"代理/VPN 兼容性"。普通用户可以先临时暂停代理/VPN/TUN 后重试；高级用户可以把认证服务器地址加入直连规则。
+and look at the "proxy/VPN compatibility" section of the output. Regular users can temporarily pause the proxy/VPN/TUN and retry; advanced users can add the authentication server address to a direct-connect rule.
 
-### Q: 开机自启动找不到？
+### Q: I can't find the run-at-login program?
 
-开机自启动的程序不会在桌面显示图标。它在后台运行，只在任务栏右下角（系统托盘）有图标。如果找不到，按 `Ctrl+Shift+Esc` 打开任务管理器，查看"启动"选项卡。
+The autostart program does not show a desktop icon. It runs in the background with an icon only in the system tray (bottom-right of the taskbar). If you cannot find it, press `Ctrl+Shift+Esc` to open Task Manager and check the "Startup" tab.
 
-### Q: 如何卸载？
+### Q: How do I uninstall?
 
-1. 删除下载的程序文件夹
-2. 删除配置文件：
-   - Windows：`%APPDATA%\cyber-lobster\`
-   - Linux：`~/.config/cyber-lobster/`
-   - macOS：`~/.config/cyber-lobster/`
-
----
-
-## ⚠️ 免责声明
-
-- 本工具仅用于**用户自己的校园网账号自动认证和断网重连**
-- 本工具**不绕过认证、不破解、不共享账号、不突破在线数量限制**
-- 本工具**只自动提交用户自己的账号**，模拟正常的登录流程
-- 学校/运营商的**认证策略、在线设备数量、教室是否弹认证页**，由网络系统决定，本工具无法控制
-- 部分教室/网络环境**不弹认证页、无法认证、在线数满**，可能不是软件问题
-- **不保证适配所有 Ruijie ePortal 版本**
-- **不建议在公共电脑保存账号**
-- 使用者应**遵守学校网络管理规定**
-- 下载请以 **GitHub Releases 或官方页面**为准，不要使用来路不明的 exe
-- **使用者自行承担**账号安全和网络合规责任
-
-详见 [docs/DISCLAIMER.md](docs/DISCLAIMER.md)。
+1. Delete the downloaded program folder
+2. Delete the config file:
+   - Windows: `%APPDATA%\cyber-lobster\`
+   - Linux: `~/.config/cyber-lobster/`
+   - macOS: `~/.config/cyber-lobster/`
 
 ---
 
-## 📦 发布包说明
+## ⚠️ Disclaimer
 
-| 文件 | 用途 |
+- This tool is only for **automatic authentication and reconnect-on-dropout with the user's own campus network account**
+- It **does not bypass authentication, crack anything, share accounts, or defeat concurrent-device limits**
+- It **only submits the user's own credentials automatically**, mimicking the normal login flow
+- **Authentication policies, concurrent device limits, and whether classrooms show an authentication page** are decided by the network system and cannot be controlled by this tool
+- Some classrooms/network environments **show no authentication page, cannot authenticate, or are at the device limit** — that may not be a software problem
+- **Compatibility with every Ruijie ePortal version is not guaranteed**
+- **Saving credentials on shared computers is not recommended**
+- Users should **comply with their school's network management rules**
+- Download from **GitHub Releases or the official page**; never run exe files of unknown origin
+- **Users are responsible** for their own account security and network compliance
+
+Details: [docs/DISCLAIMER.md](docs/DISCLAIMER.md).
+
+---
+
+## 📦 Release artifacts
+
+| File | Purpose |
 |------|------|
-| `campusnet-guard-windows.zip` | Windows 用户下载包 |
-| `campusnet-guard_all.deb` | Debian / Ubuntu 图形安装包 |
-| `campusnet-guard-macos-apple-silicon.dmg` | Apple Silicon Mac 图形安装包 |
-| `campusnet-guard-macos-intel.dmg` | Intel Mac 图形安装包 |
-| `1-点我启动-校园网守护.exe` | 图形界面版（推荐） |
-| `9-排障工具-不懂不用点.exe` | 排障工具，普通用户不用打开 |
+| `campusnet-guard-windows.zip` | Windows user download package |
+| `campusnet-guard_all.deb` | Debian / Ubuntu GUI installer |
+| `campusnet-guard-macos-apple-silicon.dmg` | Apple Silicon Mac GUI installer |
+| `campusnet-guard-macos-intel.dmg` | Intel Mac GUI installer |
+| `1-点我启动-校园网守护.exe` | GUI build (recommended) |
+| `9-排障工具-不懂不用点.exe` | Troubleshooting tool — regular users don't need to open it |
 
-- **Windows 与 macOS 不需要安装 Python** — 发布包已包含 Python 运行时
-- **不需要安装 PyInstaller** — 这是开发工具，普通用户不需要
-- **Linux 用户**：推荐安装 DEB，也支持源码安装
+- **Windows and macOS need no Python installation** — the release packages bundle the Python runtime
+- **No PyInstaller installation needed** — that is a development tool, not required by users
+- **Linux users**: the DEB is recommended; source installation is also supported
 
 ---
 
@@ -364,17 +364,17 @@ campusnet doctor
 
 ---
 
-## 官网与国内快速下载
+## Official site and fast downloads in China
 
-- 官网：<https://campusnet.journeymind.blog>
-- GitHub Releases：<https://github.com/mi179/campusnet-guard/releases/latest>
-- 国内快速下载：见 [docs/MIRROR_DOWNLOADS.md](docs/MIRROR_DOWNLOADS.md)
+- Official site: <https://campusnet.journeymind.blog>
+- GitHub Releases: <https://github.com/mi179/campusnet-guard/releases/latest>
+- Fast mainland-China downloads: see [docs/MIRROR_DOWNLOADS.md](docs/MIRROR_DOWNLOADS.md)
 
-> ⚠️ **安全提醒**：无论从哪个渠道下载，都请优先核对 GitHub Releases 或官网说明，避免来路不明的 exe 文件。
+> ⚠️ **Security note**: whichever channel you download from, cross-check against GitHub Releases or the official site first, and avoid exe files of unknown origin.
 
 ---
 
 <div align="center">
-  Made with ❤️ · CampusNet Guard 守护着你的校园网<br>
-  <sub>有问题请提交 Issue → https://github.com/mi179/campusnet-guard/issues</sub>
+  Made with ❤️ · CampusNet Guard keeps your campus network online<br>
+  <sub>Found a problem? Open an issue → https://github.com/mi179/campusnet-guard/issues</sub>
 </div>
