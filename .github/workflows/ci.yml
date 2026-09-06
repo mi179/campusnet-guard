@@ -1,0 +1,25 @@
+# 本仓库此前只有打包流水线（release.yml 打 tag 出包、latest-windows.yml 推 main 出 Windows 包），
+# tests/ 下的 9 个测试模块从不在 CI 里运行。这份补上测试。
+#
+# 没有加 ruff 作业：pyproject 里没有 ruff 配置，贸然加会因既有代码风格直接变红，
+# 那是噪声不是信号。要加 lint 先定规则。
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install package
+        run: pip install -e .
+      - name: Unit tests
+        run: python -m unittest discover -s tests -v
