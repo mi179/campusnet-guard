@@ -203,13 +203,16 @@ def ensure_encrypted_password(
         qs = detect_query_string()
     if not qs:
         logger.warning("⚠ 自动检测失败，回退默认值")
+        # 下面是结构示例，不是可用的真实抓包：地址用 RFC 5737 文档段、MAC 用 RFC 7042
+        # 文档段、交换机端口用占位符。wlanuserip 必须与当前客户端实际地址一致才可能
+        # 通过认证，所以这条兜底的作用是保持请求结构合法，而不是真的能登上。
         qs = (
-            "wlanuserip%3D10.9.213.248"
+            "wlanuserip%3D198.51.100.24"
             "%26wlanacname%3Dlogic"
-            "%26nasip%3D10.253.0.17"
-            "%26wlanparameter%3D50-bb-b5-db-26-36"
+            "%26nasip%3D198.51.100.17"
+            "%26wlanparameter%3D00-00-5e-00-53-36"
             "%26url%3Dhttp%3A%2F%2Fwww.baidu.com%2F"
-            "%26userlocation%3Dethtrunk%2F3%3A3960.0"
+            "%26userlocation%3Dethtrunk%2FX%3AYYYY.0"
         )
 
     key = fetch_public_key(host, qs, session=session)
@@ -460,7 +463,7 @@ def detect_query_string(
     从中提取 query 部分返回（不包含前导 ?）。
 
     返回:
-        queryString 字符串（如 "wlanuserip=10.9.213.248&..."），
+        queryString 字符串（如 "wlanuserip=198.51.100.24&..."），
         未捕获到时返回空字符串。
     """
     try:
@@ -500,11 +503,11 @@ def build_double_encoded_qs(raw_query_string: str) -> str:
 def build_referer(host: str, creds: PortalCredentials) -> str:
     """构造 Referer URL。"""
     params = {
-        "wlanuserip": "10.9.213.248",
+        "wlanuserip": "198.51.100.24",
         "wlanacname": "logic",
-        "nasip": "10.253.0.17",
-        "wlanparameter": "50-bb-b5-db-26-36",
-        "userlocation": "ethtrunk/3:3960.0",
+        "nasip": "198.51.100.17",
+        "wlanparameter": "00-00-5e-00-53-36",
+        "userlocation": "ethtrunk/X:YYYY.0",
     }
 
     if creds.query_string:

@@ -12,6 +12,6 @@
     "password_scheme": "win-dpapi",
     "password_protected": "base64-dpapi-blob...",
     "service": "DX",
-    "query_string": "wlanuserip%3D10.9.213.248%26wlanacname%3Dlogic%26nasip%3D10.253.0.17%26wlanparameter%3D50-bb-b5-db-26-36%26url%3Dhttp%3A%2F%2Fwww.baidu.com%2F%26userlocation%3Dethtrunk%2F3%3A3960.0"
+    "query_string": "wlanuserip%3D198.51.100.24%26wlanacname%3Dlogic%26nasip%3D198.51.100.17%26wlanparameter%3D00-00-5e-00-53-36%26url%3Dhttp%3A%2F%2Fwww.baidu.com%2F%26userlocation%3Dethtrunk%2FX%3AYYYY.0"
   }
 }
